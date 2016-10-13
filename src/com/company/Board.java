@@ -8,18 +8,16 @@ import java.util.EmptyStackException;
  */
 public class Board extends Piece {
     String figuren = Stones.figuren;
-    int width;
-    int height;
+    final int width;
     Field[][] fields;
 
     DoublePoint[] balance;
 
-    public Board(int width, int height) {
+    public Board(int width) {
         this.width = width;
-        this.height = height;
-        fields = new Field[width][height];
+        fields = new Field[width][width];
         for (int i = 0; i < this.width; i++){
-            for (int j = 0; j < this.height; j++){
+            for (int j = 0; j < this.width; j++){
                 fields[i][j] = new Field();
             }
         }
@@ -30,15 +28,13 @@ public class Board extends Piece {
 
     public void reset() {
         for (int i = 0; i < width; i++) {
-            new Field().setString("");
-            String temp1 = "" + figuren.charAt(0) + charC[0];
-            setField(new Point(i, 1), new Field().setString(temp1));//new Field.setString(figuren.charAt(0) + "" + charC[0]));
-            setField(new Point(i, 6), new Field(figuren.charAt(0) + "" + charC[1]));
+            fields[i][1].setString(figuren.charAt(0) + "" + charC[0]);
+            fields[i][6].setString(figuren.charAt(0) + "" + charC[1]);
         }
         for (int x = 0; x < 5; x++) {
             for (int n = 0; n < 2; n++) {
-                setField(new Point(x, 7 * n), new Field(figuren.charAt(x + 1) + "" + charC[n]));
-                if (x != 4) setField(new Point(x + 4, 7 * n), new Field(figuren.charAt(4 - x) + "" + charC[n]));
+                fields[x][7 * n].setString(""+ figuren.charAt(x + 1) + charC[n]);
+                if (x != 4) fields[x + 4][7 * n].setString("" + figuren.charAt(4 - x) + charC[n]);
             }
         }
         balance = getBalance();
@@ -62,7 +58,7 @@ public class Board extends Piece {
         fields[x1][y1] = fld;
     }
 
-    public DoublePoint[] getBalance(){
+    public DoublePoint[] getBalance() {
         DoublePoint pointSum[] = {new DoublePoint(0,0), new DoublePoint(0,0)};
         for (int n = 0; n < 2; n++) {
             int count = 0;
@@ -86,10 +82,6 @@ public class Board extends Piece {
     public int getWidth() {
         return width;
     }
-
-    public int getHeight() {
-        return height;
-    }
 }
 
 class DoublePoint{
@@ -105,6 +97,15 @@ class DoublePoint{
         y /= n;
     }
 
+    public void addPoint(DoublePoint p1) {
+        x += p1.getX();
+        y += p1.getY();
+    }
+
+    public void print(){
+        System.out.println("["+x+","+y+"]");
+    }
+
     public double getX() {
         return x;
     }
@@ -112,23 +113,22 @@ class DoublePoint{
     public double getY() {
         return y;
     }
-
-    public void print(){
-        System.out.println("["+x+","+y+"]");
-    }
-
-    public void addPoint(DoublePoint p1) {
-        x += p1.getX();
-        y += p1.getY();
-    }
 }
 
-class Field extends Piece{
+class Field extends Piece {
     String field;
     final String empty = "  ";
 
     public Field() {
         field = empty;
+    }
+
+    public void clearField(){
+        field = empty;
+    }
+
+    public void setString(String str) {
+        field = str;
     }
 
     public boolean isPiece(int n) {
@@ -145,14 +145,6 @@ class Field extends Piece{
 
     public boolean isColor(int n){
         return getColor() == charC[n];
-    }
-
-    public void clearField(){
-        field = empty;
-    }
-
-    public void setString(String str) {
-        field = str;
     }
 
     public String getString() {

@@ -39,7 +39,7 @@ public class Move extends Logic {
 			String checkChar = "";
 			if(isCheck(brd, 0) || isCheck(brd, 1)) checkChar = "+";
 
-			System.out.println(Stones.figuren.charAt(brd.getField(p2).getPiece()) + "" + Stones.ROW_K.charAt(x1) + "" + (8 - y1) + "" + moveChar + "" + fieldTemp.getPiece() + "" + Stones.ROW_K.charAt(x2) + "" + (8 - y2) + checkChar);
+//			System.out.println(Stones.figuren.charAt(brd.getField(p2).getPiece()) + "" + Stones.ROW_K.charAt(x1) + "" + (8 - y1) + "" + moveChar + "" + fieldTemp.getPiece() + "" + Stones.ROW_K.charAt(x2) + "" + (8 - y2) + checkChar);
 
 			if(fieldTemp.getPiece() == 'k') System.out.println("#######################################");
 			moved();

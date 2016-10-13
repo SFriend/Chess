@@ -43,10 +43,10 @@ public class Logic extends Piece {
 	 * @param p2 koodinaties
      */
 	public boolean direction(Board brd, Point p1, Point p2){
-		System.out.println(brd.getField(p1).getString() + " " + brd.getField(p1).isEmpty());
 		if(brd.getField(p1).isEmpty()) return  false;
 		if(brd.getField(p1).isColor(getPlayer())) return false; // checks if correct (color) piece is selected
 		if(inTheWay(brd, p1, p2)) return false;
+		System.out.println(brd.getField(p1).getString() + " " + brd.getField(p1).isEmpty());
 //		if(brd[x1][y1].charAt(0) == figuren.charAt(5) && brd[x2][y2].charAt(0) == figuren.charAt(1)); //Rochade
 		return moveViable(brd, p1, p2);
 	}
@@ -177,15 +177,16 @@ public class Logic extends Piece {
 	public boolean ableToMove(Board brd, Point p1, Point p2){
 		if(brd.isColorEqual(p1,p2)) return false;
 		if (!direction(brd, p1, p2)) return false;
-		Board temp_brd = new Board(8,8);
+		Board temp_brd = new Board(8);
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				temp_brd.setField(new Point(i,j), brd.getField(new Point(i,j)));
+				temp_brd.fields[i][j] = new Field();
+				temp_brd.fields[i][j].setString(brd.fields[i][j].getString());
+//				temp_brd.setField(new Point(i,j), brd.getField(new Point(i,j)));
 			}
 		}
-		brd.moveStone(p1,p2);
-
-		return !isCheck(temp_brd, getPlayer());
+		temp_brd.moveStone(p1,p2);
+		return !isCheck(temp_brd, 0);
 	}
 
 	/**

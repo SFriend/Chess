@@ -5,18 +5,18 @@ import com.company.elo.Elo;
 import java.awt.*;
 
 public class Smart extends Logic {
-	private static int posibleMoves[][] = new int[8][8];
-	private static int white, black;
-	static int amount;
-	private static int whiteMax, whiteMaxAmount;
-	private static final int maxGood = 0;
-	static int max;
+	int posibleMoves[][] = new int[8][8];
+	int white, black;
+	int amount;
+	int whiteMax, whiteMaxAmount;
+	final int maxGood = 0;
+	int max;
 
 	static Elo elo = new Elo();
 	double[] values_stones;
 	double[] values_style;
 	DoublePoint prefBoardMiddle;
-
+	boolean calculating;
 	Board brd;
 
 	/**

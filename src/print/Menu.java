@@ -1,8 +1,10 @@
-package com.company;
+package print;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import com.company.EasterEgg;
+import com.company.Main;
+import com.company.Stones;
+
+import java.awt.*;
 
 public class Menu extends Main {
 	EasterEgg easEgg = new EasterEgg();
@@ -29,7 +31,11 @@ public class Menu extends Main {
 	public int scale(int n){
 		return (n * width) / 100;
 	}
-	
+
+	public void oval(int x, int y, int width, int height){
+		gBuffer.fillOval(scale(x) + abstX, scale(y) + abstY, scale(width), scale(height));
+	}
+
 	public void Settings(){
 		if(minsek%2==0) uhrSek = true;
 		else uhrSek = false;
@@ -59,17 +65,16 @@ public class Menu extends Main {
 		gBuffer.drawString("CvS", scale(1262) + abstX, scale(140) + abstY);
 		gBuffer.drawString("CvC", scale(1332) + abstX, scale(140) + abstY);
 		gBuffer.setColor(Color.ORANGE);
-		gBuffer.fillOval(scale(1140) + abstX, scale(150) + abstY, scale(25), scale(25));
-		gBuffer.fillOval(scale(1210) + abstX, scale(150) + abstY, scale(25), scale(25));
-		gBuffer.fillOval(scale(1280) + abstX, scale(150) + abstY, scale(25), scale(25));
-		gBuffer.fillOval(scale(1350) + abstX, scale(150) + abstY, scale(25), scale(25));
+		for (int i = 0; i < 4; i++) {
+			oval(1140 + 70 * i, 150, 25, 25);
+		}
 
 		//Choise-Buttons
 		gBuffer.setColor(Color.black);
-			 if(!computer && !computerVScomputer) gBuffer.fillOval(scale(1145) + abstX, scale(150) + scale(5) + abstY, scale(15), scale(15));
-		else if( computer && !computerVScomputer) gBuffer.fillOval(scale(1215) + abstX, scale(150) + scale(5) + abstY, scale(15), scale(15));
-		else if(!computer &&  computerVScomputer) gBuffer.fillOval(scale(1285) + abstX, scale(150) + scale(5) + abstY, scale(15), scale(15));
-		else if( computer &&  computerVScomputer) gBuffer.fillOval(scale(1355) + abstX, scale(150) + scale(5) + abstY, scale(15), scale(15));
+			 if(!computer && !computerVScomputer) oval(1145, 150 + 5, 15, 15);
+		else if( computer && !computerVScomputer) oval(1215, 150 + 5, 15, 15);
+		else if(!computer &&  computerVScomputer) oval(1285, 150 + 5, 15, 15);
+		else if( computer &&  computerVScomputer) oval(1355, 150 + 5, 15, 15);
 		
 		gBuffer.setColor(Color.black);
 		gBuffer.setFont(new Font("Arial", Font.BOLD, (int)(34*width/100)));
@@ -351,6 +356,20 @@ public class Menu extends Main {
 			gBuffer.setColor(Color.black);
 			gBuffer.setFont(new Font("Arial", Font.PLAIN, 65*width/100));
 			gBuffer.drawString(letzterZug, (int)(800*width/100) + abstX+width, (int)(870*width/100) + abstY);
+		}
+	}
+
+	public void printSinus() {
+		for (double i = 0; i < 480; i++) {
+			gBuffer.setStroke(new BasicStroke(5));
+			int red = (int) (Math.sin(i / 10 + 0 + sincl * i / i) * 127 + 128);
+			int green = (int) (Math.sin(i / 10 + 2 + sincl * i / i) * 127 + 128);
+			int blue = (int) (Math.sin(i / 10 + 4 + sincl * i / i) * 127 + 128);
+			gBuffer.setColor(new Color(red, green, blue));
+			double mathsin = Math.sin(sincl / 5) * Math.sin(sincl / 5) * 100;
+			double mathcos = Math.cos(sincl / 5) * Math.cos(sincl / 5) * 100;
+			gBuffer.drawLine((int) (i + 100), (int) (Math.sin(i / mathsin) * mathsin + 250), (int) (i + 166), (int) (Math.sin(i / mathcos) * mathcos + 250));
+			gBuffer.drawLine((int)(i), (int)(Math.tan(i/30)*30) + 100, (int)(i), (int)(Math.tan(i/30)*30) + 100);
 		}
 	}
 }
