@@ -24,12 +24,18 @@ public class Game {
     private boolean chosen = false;
 
     public static void main(String[] args) {
-//        new Board(8).print();
+        Board brd = new Board(8);
 
-//        new Pawn(0,0,true);
-
-//        System.out.print(Pawn.getCount());
+        brd.print();
+        brd.move.random(0,1,0,3);
+//        brd.move(0,1,0,3);
+//        brd.print();
+        System.out.print(brd.pieces1.remove(new Rook(0,0,true)));
 //        EventQueue.invokeLater(new Main());
+    }
+
+    public Game(){
+
     }
 
     public void reset(){

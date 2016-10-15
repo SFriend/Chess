@@ -8,12 +8,11 @@ import java.awt.*;
 public class ChessStones {
 	private final String figuren = "PRKBQk";
 	final String ROW = "abcdefgh";
-	public Graphics2D gBuffer = Main.gBuffer;
-	public int width = Main.width;
+	public Graphics2D gBuffer; //Main.gBuffer;
+	public int width = 100;
 
-	Board brd = new Board(8);
 	ChessColor cc = new ChessColor();
-	public ChessStones() {
+	public ChessStones(Board brd) {
 		for (int x1 = 0; x1 < 8; x1++) {
 			for (int y1 = 0; y1 < 8; y1++) {
 				if (brd.getField(x1, y1).isPlayer1())
@@ -83,11 +82,11 @@ public class ChessStones {
 			gBuffer.setColor(Color.lightGray);
 			gBuffer.fillRect((i+x) * width + width + calcScale(5), y * width + width - width + calcScale(5), width - calcScale(10), width - calcScale(10));
 			Point temp_point = new Point(x,y);
-			if (brd.getField(x,y).isPlayer1()) {
-				gBuffer.setColor(cc.getPlayer1());
-			} else if (!brd.getField(x,y).isPlayer1()) {
-				gBuffer.setColor(cc.getPlayer2());
-			}
+//			if (brd.getField(x,y).isPlayer1()) {
+//				gBuffer.setColor(cc.getPlayer1());
+//			} else if (!brd.getField(x,y).isPlayer1()) {
+//				gBuffer.setColor(cc.getPlayer2());
+//			}
 			rook  ((0 + x) * width, (-1 + y) * width);
 			knight((1 + x) * width, (-1 + y) * width);
 			bishop((2 + x) * width, (-1 + y) * width);
@@ -195,6 +194,26 @@ public class ChessStones {
 		int[] x2 = 		{i + calcScale(22) + width, i + calcScale(78) + width, i + calcScale(80) + width, i + calcScale(20) + width }; // Balcken-oben
 		int[] y2 = 		{j + calcScale(80) + width, j + calcScale(80) + width, j + calcScale(76) + width, j + calcScale(76) + width };
 		gBuffer.fillPolygon(x2, y2, 4);
+	}
+
+	public void easterEggBvB1(){
+		gBuffer.setColor(Color.black);
+		gBuffer.setFont(new Font("Arial Narrow", Font.BOLD, (int)(95*width/100)));
+		gBuffer.drawString("B", width * 8 + width  * 2 + (int)(25*width/100) -width+width, width * 1 + (int)(35*width/100) + width);
+		gBuffer.drawString("V", width * 8 + width  * 2 + (int)(75*width/100) -width+width, width * 1 + 0 + width);
+		gBuffer.drawString("B", width * 8 + width  * 2 + (int)(125*width/100) -width+width, width * 1 + (int)(35*width/100) + width);
+		gBuffer.setFont(new Font("Arial Narrow", Font.BOLD, (int)(50*width/100)));
+		gBuffer.drawString("09", width * 8 + width  * 2 + (int)(80*width/100) -width+width, width * 1 + (int)(75*width/100) + width);
+	}
+
+	public void easterEggBvB2(){
+		gBuffer.setColor(Color.black);
+		gBuffer.setFont(new Font("Arial Narrow", Font.BOLD, (int)(95*width/100)));
+		gBuffer.drawString("B", width * 8 + width  * 2 + (int)(25*width/100) -width+width, width * 7 + (int)(35*width/100) + width);
+		gBuffer.drawString("V", width * 8 + width  * 2 + (int)(75*width/100) -width+width, width * 7 + 0 + width);
+		gBuffer.drawString("B", width * 8 + width  * 2 + (int)(125*width/100) -width+width, width * 7 + (int)(35*width/100) + width);
+		gBuffer.setFont(new Font("Arial Narrow", Font.BOLD, (int)(50*width/100)));
+		gBuffer.drawString("09", width * 8 + width  * 2 + (int)(80*width/100) -width+width, width * 7 + (int)(75*width/100) + width);
 	}
 
 	public int calcScale(int a){

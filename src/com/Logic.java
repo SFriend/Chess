@@ -7,13 +7,14 @@ public class Logic  {
 	public boolean inTheWay(Board brd, int x1, int y1, int x2, int y2) {
 		if(brd.getField(x1, y1).isKnight()) return false;
 
-		int vx = vec(x1,x2);
-		int vy = vec(y1,y2);
+		int vx = vec(x1, x2);
+		int vy = vec(y1, y2);
 
 		for (int i = 1; i <= 6 + 1; i++) {
 			try {
 				if ((x1 + (vx * i)) == x2 && (y1 + (vy * i)) == y2) return false;
-				if (brd.getField((x1 + (vx * i)),( y1 + (vy * i))).isEmpty()) continue;
+//				if (brd.getField((x1 + (vx * i)),(y1 + (vy * i))).isEmpty()) continue;
+				if(brd.isEmpty(x1 + (vx * i),y1 + (vy * i))) continue;
 				else return true;
 			} catch (Exception e) {
 				System.out.println("error in the way");
@@ -41,7 +42,7 @@ public class Logic  {
      */
 	public boolean direction(Board brd, int x1, int y1, int x2, int y2){
 		if(brd.getField(x1, y1).isEmpty()) return  false;
-		if(brd.getField(x1, y1).isPlayer1()) return false; // checks if correct (color) piece is selected //TODO palyer
+		if(!brd.getField(x1, y1).isPlayer1()) return false; // checks if correct (color) piece is selected //TODO palyer
 		if(inTheWay(brd, x1, y1, x2, y2)) return false;
 		System.out.println(brd.getField(x1, y1).getPiece().getName()+ " " + brd.getField(x1, y1).isEmpty());
 //		if(brd[x1][y1].charAt(0) == figuren.charAt(5) && brd[x2][y2].charAt(0) == figuren.charAt(1)); //Rochade
@@ -95,7 +96,7 @@ public class Logic  {
 			}
 		} else { // target field
 			if((Math.abs(x1 - x2) == 1)){ // one step diagonal
-				if((y2 - y1) * temp == 1){ // one step
+				if((y2 - y1) * temp == -1){ // one step
 					return true;
 				}
 			}

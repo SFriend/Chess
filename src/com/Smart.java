@@ -311,31 +311,3 @@ class Count {
 		return this.c;
 	}
 }
-
-class Dim4 {
-	int x1, y1, x2, y2, randCount, random;
-	public Dim4(int i1, int j1, int i2, int j2, int randCount, int random){
-		this.x1 = i1;
-		this.y1 = j1;
-		this.x2 = i2;
-		this.x2 = j2;
-	}
-	public void x1(){
-		this.x1--;
-	}
-	public void y1(){
-		this.y1--;
-	}
-	public void x2(){
-		this.x2--;
-	}
-	public void y2(){
-		this.y2--;
-	}
-	public void randCount(){
-		this.randCount--;
-	}
-	public void random(){
-		this.random--;
-	}
-}

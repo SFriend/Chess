@@ -1,4 +1,4 @@
-package com;
+package print;
 
 import java.awt.*;
 
@@ -24,11 +24,6 @@ public class Button {
 
 	public boolean isBetween(double n, double d1, double d2){
 		return scale(n) >= scale(d1) && scale(n) < scale(d1+d2);
-	}
-	
-	public Dim5 getDim(){
-		Dim5 dim = new Dim5(x, y, width, height, n);
-		return dim;
 	}
 }
 

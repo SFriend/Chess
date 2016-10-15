@@ -1,15 +1,12 @@
 package print;
 
 import com.Board;
-import com.EasterEgg;
 import com.Main;
 import com.Timer;
-import com.company.*;
 
 import java.awt.*;
 
 public class ChessPrint extends Main {
-	EasterEgg easEgg = new EasterEgg();
 
 	boolean computer;
 	boolean computerVScomputer;
@@ -24,7 +21,7 @@ public class ChessPrint extends Main {
 	static int quaX;
 	static int quaY = 100;
 
-	ChessStones chessStones = new ChessStones();
+	ChessStones chessStones = new ChessStones(brd);
 	ChessColor color = new ChessColor();
 	
 	public void print(int x1, int y1, int x2, int y2){
@@ -40,7 +37,7 @@ public class ChessPrint extends Main {
 		if(game.isChosen()){ // prints chose
 			Field(x2, y2);
 		}
-		new ChessStones();
+		new ChessStones(brd);
 //		if(choseStone) new ChessStones().ChoseStone(choseStoneX, choseStoneY);
 		Settings();
 		Uhren();
@@ -298,7 +295,7 @@ public class ChessPrint extends Main {
 		gBuffer.fillOval(width * 8 + abstX + scale(5) +width, width * 6 + abstY + scale(5), width * 2 - (int)(10*width/100), width * 2 - (int)(10*width/100));
 		gBuffer.setColor(Color.yellow);
 		gBuffer.fillOval(width * 8 + abstX + (int)(10*width/100) +width, width * 6 + abstY + (int)(10*width/100), width * 2 - (int)(20*width/100), width * 2 - (int)(20*width/100));
-		if(!easterEgg[0]) easEgg.easterEggBvB2(); //TODO: integrieren
+		if(!easterEgg[0]) chessStones.easterEggBvB2(); //TODO: integrieren
 		gBuffer.setColor(Color.gray);
 		gBuffer.fillArc(width * 8 + abstX+width, width * 6 + abstY, width * 2, width * 2, 0, (int) (((double)timeP1.getTime() / (double)timeP1.getTime()) * 360)-360);
 		gBuffer.setColor(Color.black);
@@ -326,7 +323,7 @@ public class ChessPrint extends Main {
 		gBuffer.fillOval(width * 8 + abstX+ scale(5) +width, width * 0 + abstY + scale(5), width * 2 - (int)(10*width/100), width * 2 - (int)(10*width/100));
 		gBuffer.setColor(Color.yellow);
 		gBuffer.fillOval(width * 8 + abstX+ (int)(10*width/100) +width, width * 0 + abstY + (int)(10*width/100), width * 2 - (int)(20*width/100), width * 2 - (int)(20*width/100));
-		if(!easterEgg[0]) easEgg.easterEggBvB1(); //TODO: integrieren
+		if(!easterEgg[0]) chessStones.easterEggBvB1(); //TODO: integrieren
 		gBuffer.setColor(Color.gray);
 		gBuffer.fillArc(width * 8 + abstX+width, width * 0 + abstY, width * 2, width * 2, 0, (int) (((double)timeP2.getTime() / (double)timeP1.getTime()) * 360)-360);
 		gBuffer.setColor(Color.black);

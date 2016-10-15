@@ -1,7 +1,6 @@
 package com;
 
-import print.ChessColor;
-import print.ChessPrint;
+import print.*;
 
 import java.awt.*;
 
@@ -25,8 +24,8 @@ public class Main extends JPanel implements Runnable {
     //	static String board[][] = new String[8][8]; // TODO multiverson
     static Board brd = new Board(8);
 
-    static Button[][] btnsTime = new Button[2][4];
-    static Button btnClock;
+    static print.Button[][] btnsTime = new print.Button[2][4];
+    static print.Button btnClock;
     static String log[] = new String[9999];
     static Mouse m = new Mouse();
     static Mouse lastMove = new Mouse();
@@ -134,10 +133,10 @@ public class Main extends JPanel implements Runnable {
         int h = (25);
         int ab = (40);
         for (int i = 0; i < 4; i++) {
-            btnsTime[0][3 - i] = new Button(l + ab * i, o, w, h, 3);
-            btnsTime[1][3 - i] = new Button(l + ab * i, u, w, h, 3);
+            btnsTime[0][3 - i] = new print.Button(l + ab * i, o, w, h, 3);
+            btnsTime[1][3 - i] = new print.Button(l + ab * i, u, w, h, 3);
         }
-        btnClock = new Button((1105 * width / 100), (740 * width / 100), scale(98), scale(50), 0);
+        btnClock = new print.Button((1105 * width / 100), (740 * width / 100), scale(98), scale(50), 0);
     }
 
     public void printLog() {

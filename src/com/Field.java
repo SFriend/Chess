@@ -64,4 +64,8 @@ public class Field {
     public Piece getPiece() {
         return this.piece;
     }
+
+    public int getFieldID(){
+        return piece.getID();
+    }
 }

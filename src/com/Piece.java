@@ -1,5 +1,7 @@
 package com;
 
+import java.util.ArrayList;
+
 /**
  * Created by pdk on 10.10.16.
  */
@@ -10,7 +12,7 @@ public class Piece {
     private int value;
     final boolean player1;
     private String name;
-    private int ID;
+    private int ID = -1;
 
     public Piece(int x, int y, boolean player1){
         this.x = x;
