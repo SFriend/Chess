@@ -1,4 +1,4 @@
-package com.company.elo;
+package com.elo;
 
 /**
  * Created by pdk on 09.10.16.

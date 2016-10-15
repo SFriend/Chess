@@ -1,4 +1,4 @@
-package com.company;
+package com;
 
 import java.awt.*;
 
@@ -8,17 +8,11 @@ public class Move extends Logic {
 	/**
 	 * moved = true if stones got moved
 	 * @param brd
-	 * @param p1
-     * @param p2
      */
-	public Move(Board brd, Point p1, Point p2) {
-		int x1 = (int) p1.getX();
-		int x2 = (int) p2.getX();
-		int y1 = (int) p1.getY();
-		int y2 = (int) p2.getY();
-		if(ableToMove(brd, p1, p2)) {
-			Field fieldTemp = brd.getField(p2);
-			brd.moveStone(p1,p2);
+	public Move(Board brd, int x1, int y1, int x2, int y2) {
+		if(ableToMove(brd, x1, y1, x2, y2)) {
+			Field fieldTemp = brd.getField(x2,y2);
+			brd.moveStone(x1, y1, x2, y2);
 
 //			if(brd.getField(p1).isPiece(0)){ // pawn to special piece
 //				if((computer || computerVScomputer)){ // computer
@@ -41,7 +35,7 @@ public class Move extends Logic {
 
 //			System.out.println(Stones.figuren.charAt(brd.getField(p2).getPiece()) + "" + Stones.ROW_K.charAt(x1) + "" + (8 - y1) + "" + moveChar + "" + fieldTemp.getPiece() + "" + Stones.ROW_K.charAt(x2) + "" + (8 - y2) + checkChar);
 
-			if(fieldTemp.getPiece() == 'k') System.out.println("#######################################");
+			if(fieldTemp.isKing()) System.out.println("#######################################");
 			moved();
 		}
 	}

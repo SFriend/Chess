@@ -1,6 +1,6 @@
-package com.company;
+package com;
 
-import com.company.elo.Elo;
+import com.elo.Elo;
 
 import java.awt.*;
 
@@ -49,11 +49,10 @@ public class Smart extends Logic {
 	public void checkForBestMove(){
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
-				Point temp_point = new Point(x1,y1);
-				if(brd.getField(temp_point).isEmpty()) continue; // || brd[x1][y1].charAt(1) == charC[0]) continue;
+				if(brd.getField(x1, y1).isEmpty()) continue; // || brd[x1][y1].charAt(1) == charC[0]) continue;
 				for(int x2 = 0; x2 < 8; x2++){
 					for(int y2 = 0; y2 < 8; y2++){
-						if(brd.isColorEqual(new Point(x1,y1),new Point(x2,y2))) continue;
+						if(brd.isColorEqual(x1, y1,x2, y2)) continue;
 
 //						while(tCount.getCount() > 8){}
 //						if(!imWeg(x1, y1, x2, y2) && ableToMove(x1, y1, x2, y2)) {
@@ -80,17 +79,17 @@ public class Smart extends Logic {
 		final Count count = new Count();
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
-				if(brd.getField(new Point(x1,y1)).isEmpty()) continue;
+				if(brd.getField(x1, y1).isEmpty()) continue;
 				for(int x2 = 0; x2 < 8; x2++){
 					for(int y2 = 0; y2 < 8; y2++){
 						if(x1 == x2 && y1 == y2) continue;
-						if(brd.isColorEqual(new Point(x1,y1),new Point(x2,y2))) continue;
+						if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 
 						if(!imWegSupport(x1, y1, x2, y2)){
 							if(canMoveCheck(brd, x1, y1, x2, y2)){
 								if(white == whiteMax){
 									if(randCount == random){
-										if(new Move(brd, new Point(x1,y1), new Point(x2,y2)).isMoved()) {
+										if(new Move(brd, x1, y1,  x2, y2).isMoved()) {
 											System.out.println("F 1");
 											print();
 //											moveC = true;
@@ -101,7 +100,7 @@ public class Smart extends Logic {
 								} else
 								if(white >= maxGood) {
 									if(randCount == random){
-										if(new Move(brd, new Point(x1,y1), new Point(x2,y2)).isMoved()){
+										if(new Move(brd, x1, y1,  x2, y2).isMoved()){
 											System.out.println("F 2");
 											print();
 //											moveC = true;
@@ -164,10 +163,10 @@ public class Smart extends Logic {
 		white = 0;
 		for(int i = 0; i < 8; i++){
 			for(int j = 0; j < 8; j++){
-				if(brd.getField(new Point(i,j)).isColor(1)) {
+				if(brd.getField(i, j).isPlayer1()) {
 					white += posibleMoves[i][j];
 				}
-				if(brd.getField(new Point(i,j)).isColor(0)) {
+				if(!brd.getField(i, j).isPlayer1()) {
 					black += posibleMoves[i][j];
 				}
 			}
@@ -185,7 +184,7 @@ public class Smart extends Logic {
 		}
 		for(int i = 0; i < 8; i++){
 			for(int j = 0; j < 8; j++){
-				if(brd.getField(new Point(i,j)).isEmpty()) continue;
+				if(brd.getField(i, j).isEmpty()) continue;
 //				posibleMoves[i][j] = support(i, j) + enemy(i, j) + enemyHit(i, j);
 			}
 		}
@@ -193,7 +192,7 @@ public class Smart extends Logic {
 	}
 	
 	boolean imWegSupport(int x1, int y1, int x2, int y2) {
-		if(brd.getField(new Point(x1,y2)).isKnight()) return false;
+		if(brd.getField(x1, y2).isKnight()) return false;
 		
 		int vx = vec(x1,x2);
 		int vy = vec(y1,y2);
@@ -201,7 +200,7 @@ public class Smart extends Logic {
 		for (int i = 1; i <= 7; i++) {
 			try {
 				if ((x1 + (vx*i)) == x2 && (y1 + (vy * i)) == y2) return false;
-				if (brd.getField(new Point(x1 + (vx * i), y1 + (vy * i))).isEmpty()) continue;
+				if (brd.getField((x1 + (vx * i)), (y1 + (vy * i))).isEmpty()) continue;
 				else return true;
 			} catch (Exception e) { }
 		}
@@ -213,8 +212,8 @@ public class Smart extends Logic {
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
 				if(x1 == x2 && y1 == y2) continue;
-				if(brd.getField(new Point(x1,y1)).isEmpty()) continue;
-				if(!brd.isColorEqual(new Point(x1,y1), new Point(x2,y2))) continue;
+				if(brd.getField(x1, y1).isEmpty()) continue;
+				if(!brd.isColorEqual(x1, y1,  x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2))
 					sup++;
 			}
@@ -227,12 +226,12 @@ public class Smart extends Logic {
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
 				if(x1 == x2 && y1 == y2) continue;
-				if(brd.getField(new Point(x1,y1)).isEmpty()) continue;
-				if(brd.isColorEqual(new Point(x1,y1),new Point(x2,y2))) continue;
+				if(brd.getField(x1, y1).isEmpty()) continue;
+				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2)) {
-					enemy += values_stones[brd.getField(new Point(x1,y1)).getPiece()];
+					enemy += values_stones[brd.getField(x1, y1).getPiece().getValue()];
 
-//					char ch = figuren.charAt(brd.getField(new Point(x1,y1)).getPiece());
+//					char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
 //					if(ch == figuren.charAt(0)) enemy-=1;
 //					if(ch == figuren.charAt(1)) enemy-=2;
 //					if(ch == figuren.charAt(2)) enemy-=3;
@@ -256,12 +255,12 @@ public class Smart extends Logic {
 		for(int x2 = 0; x2 < 8; x2++){
 			for(int y2 = 0; y2 < 8; y2++){
 				if(x1 == x2 && y1 == y2) continue;
-				if(brd.getField(new Point(x2,y2)).isEmpty()) continue;
-				if(brd.isColorEqual(new Point(x1,y1),new Point(x2,y2))) continue;
+				if(brd.getField( x2, y2).isEmpty()) continue;
+				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2)) {
-					enemyHit += values_stones[brd.getField(new Point(x1,y1)).getPiece()];
+					enemyHit += values_stones[brd.getField(x1, y1).getPiece().getValue()];
 
-//					char ch = figuren.charAt(brd.getField(new Point(x1,y1)).getPiece());
+//					char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
 //					if(ch == figuren.charAt(0)) enemyHit+=6;
 //					if(ch == figuren.charAt(1)) enemyHit+=5;
 //					if(ch == figuren.charAt(2)) enemyHit+=4;
@@ -277,9 +276,9 @@ public class Smart extends Logic {
 	public boolean canMoveSupport(Board brd, int x1, int y1, int x2, int y2){
 		if (!richtungSupport(brd, x1, y1, x2, y2)) return false;
 		
-		if(brd.getField(new Point(x1,y1)).getPiece() == 5) return true; //mal schauen ob das geht--!!
+//		if(brd.getField(x1, y1).getPiece() == 5) return true; //mal schauen ob das geht--!!
 
-		if(ableToMove(brd, new Point(x1,y1), new Point(x2,y2))){
+		if(ableToMove(brd, x1, y1,  x2, y2)){
 			check();
 			amount++;
 			return true;
@@ -290,13 +289,13 @@ public class Smart extends Logic {
 	public boolean canMoveCheck(Board brd, int x1, int y1, int x2, int y2){
 		if (!richtungSupport(brd, x1, y1, x2, y2)) return false;
 
-		return (ableToMove(brd, new Point(x1,y1), new Point(x2,y2)));
+		return (ableToMove(brd, x1, y1,  x2, y2));
 	}
 	
 	public boolean richtungSupport(Board brd, int x1, int y1, int x2, int y2){
-//		char ch = figuren.charAt(brd.getField(new Point(x1,y1)).getPiece());
+//		char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
 
-		return moveViable(brd, new Point(x1,y1), new Point(x2,y2));
+		return moveViable(brd, x1, y1,  x2, y2);
 	}
 }
 

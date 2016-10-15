@@ -1,6 +1,4 @@
-package com.company;
-
-import java.awt.*;
+package com;
 
 public class Castling extends Logic {
 	public Castling(int x1, int y1, int x2, int y2, int n) {

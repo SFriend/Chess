@@ -1,4 +1,4 @@
-package com.company;
+package com;
 
 import java.awt.*;
 
@@ -17,14 +17,14 @@ public class Random extends Logic {
 				int x1 = (int) p[0][i1][j1].getX();
 				int y1 = (int) p[0][i1][j1].getY();
 				Point temp_point = new Point(x1,y1);
-				if(brd.getField(temp_point).isEmpty()) continue; // empty field
+				if(brd.getField(x1, y1).isEmpty()) continue; // empty field
 				for (int i2 = 0; i2 < 8; i2++) {
 					for (int j2 = 0; j2 < 8; j2++) {
 						int x2 = (int) p[1][i2][j2].getX();
 						int y2 = (int) p[1][i2][j2].getY();
 						Point temp_point2 = new Point(x1,y1);
-						if(brd.isColorEqual(temp_point, temp_point2)) continue; // equal color
-						if(new Move(brd, p[0][x1][y1], p[1][x2][y2]).isMoved()) {
+						if(brd.isColorEqual(x1, y1, x2, y2)) continue; // equal color
+						if(new Move(brd, x1, y1, x2, y2).isMoved()) {
 							calculating = false;
 							return;
 						}

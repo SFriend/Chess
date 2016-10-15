@@ -1,4 +1,7 @@
-package com.company;
+package com;
+
+import print.ChessColor;
+import print.ChessPrint;
 
 import java.awt.*;
 
@@ -10,14 +13,13 @@ public class Main extends JPanel implements Runnable {
     private static final long serialVersionUID = 1L;
 
     public static int minsek;
-    public static int width = 100, abstX = width, abstY = width;
+    public static int width = 100;
     public static ChessColor color = new ChessColor();
 
     static boolean computer = false;
     static boolean computerVScomputer = computer;
     static boolean calculating = false;
     //	static int timeLimit = 1800;
-    static boolean game = false;
     static boolean uhrSek = false;
 
     //	static String board[][] = new String[8][8]; // TODO multiverson
@@ -26,14 +28,11 @@ public class Main extends JPanel implements Runnable {
     static Button[][] btnsTime = new Button[2][4];
     static Button btnClock;
     static String log[] = new String[9999];
-    static Mouse lastMove;
     static Mouse m = new Mouse();
+    static Mouse lastMove = new Mouse();
 
-    static int letzterZugX1, letzterZugX2, letzterZugY1, letzterZugY2;
     static int quaX;
     static int quaY = 100;
-    static boolean selection = false;
-    static boolean choseStone = false;
     static boolean easterEgg[] = new boolean[10];
     /* P-0 R-1 L-2 B-3 Q-4 k-5 */
 //	static final String figuren = "PRKBQk";
@@ -41,6 +40,9 @@ public class Main extends JPanel implements Runnable {
     static Timer timeP1 = new Timer(1800);
     static Timer timeP2 = new Timer(1800);
     static Image buffer;
+
+    ChessPrint menu = new ChessPrint();
+    public static Game game = new Game();
 
     public static Graphics2D gBuffer;
     @Override
@@ -62,7 +64,7 @@ public class Main extends JPanel implements Runnable {
     }
 
     public Main() {
-        this.setPreferredSize(new Dimension((int) (1400 * width / 100) + abstX, (int) (900 * width / 100) + abstY));
+        this.setPreferredSize(new Dimension((int) (1400 * width / 100) + width, (int) (900 * width / 100) + width));
         setLayout(null);
     }
 
@@ -71,11 +73,11 @@ public class Main extends JPanel implements Runnable {
     }
 
     public void paintComponent(Graphics g) {
-//		super.paintComponent(g);
+		super.paintComponent(g);
         gBuffer = (Graphics2D) g;
         gBuffer.clearRect(0, 0, this.getSize().width, this.getSize().height);
-
         gBuffer.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
 //		if ((double) this.getSize().width / this.getSize().height <= (double) 750 / 450)
 //			width = (this.getSize().width) / 14 - width / 14;
 //		else if ((double) this.getSize().width / this.getSize().height > (double) 750 / 450)
@@ -88,11 +90,8 @@ public class Main extends JPanel implements Runnable {
 //			else if (computerVScomputer && player == 0)
 //				new Random(brd);
 //		}
-        new print.Menu();
-        if (selection && choseStone && game) {
-            new Move(brd, m.p1, m.p2);
-            choseStone = false;
-        }
+
+        menu.print(lastMove.getX1(), lastMove.getY1(), lastMove.getX2(), lastMove.getY2());
         g.drawImage(buffer, 0, 0, this);
         repaint();
     }
@@ -119,7 +118,6 @@ public class Main extends JPanel implements Runnable {
     }
 
     public void vorbereiten() {
-        game = true;
         calculating = false;
         m = new Mouse();
         lastMove = new Mouse();
@@ -127,8 +125,6 @@ public class Main extends JPanel implements Runnable {
         timeP2.reset();
         for (int i = 0; i < easterEgg.length; i++)
             easterEgg[i] = true;
-        selection = false;
-        choseStone = false;
         brd.reset();
 
         int l = 1310;
@@ -184,23 +180,23 @@ public class Main extends JPanel implements Runnable {
         }
 
         public void mouseClicked(MouseEvent evt) {
-            m.getP2().setLocation(evt.getX() - abstX, evt.getY() - abstY - 25);
+            m.getP2().setLocation(evt.getX() - width, evt.getY() - width - 25);
             int mx1 = m.getX2();
             int my1 = m.getY2();
             System.out.println(mx1 + " " + width * 8);
             if (isBetween(mx1, 0, width * 8)) { // board
                 if (isBetween(my1, 0, width * 8)) {
-                    if (!selection && !choseStone) {
-                        m.p1.setLocation(mx1 / width, my1 / 100);
-                        selection = true;
-                    } else if (selection) {
-                        if (evt.getX() / width == m.p1.getX() && evt.getY() / width == m.p1.getY())
-                            selection = false;
-                        else {
-                            m.p2.setLocation(mx1 / width, my1 / width);
-                            choseStone = true;
-                        }
-                    }
+//                    if (!selection && !choseStone) {
+//                        m.p1.setLocation(mx1 / width, my1 / 100);
+//                        selection = true;
+//                    } else if (selection) {
+//                        if (evt.getX() / width == m.p1.getX() && evt.getY() / width == m.p1.getY())
+//                            selection = false;
+//                        else {
+//                            m.p2.setLocation(mx1 / width, my1 / width);
+//                            choseStone = true;
+//                        }
+//                    }
 //					if (!choseStone) {
 //						m.setP2(mx1 / width, my1 / width);
 //					} else {
@@ -225,19 +221,19 @@ public class Main extends JPanel implements Runnable {
                         if (isBetween(mx1, 1140, 1165)) {
                             computer = false;
                             computerVScomputer = false;
-                            game = false;
+                            game.finish();
                         } else if (isBetween(mx1, 1210, 1235)) {
                             computer = true;
                             computerVScomputer = false;
-                            game = false;
+                            game.finish();
                         } else if (isBetween(mx1, 1280, 1305)) {
                             computer = false;
                             computerVScomputer = true;
-                            game = false;
+                            game.finish();
                         } else if (isBetween(mx1, 1350, 1375)) {
                             computer = true;
                             computerVScomputer = true;
-                            game = false;
+                            game.finish();
                         }
                     }
 
@@ -253,7 +249,7 @@ public class Main extends JPanel implements Runnable {
                     if (isBetween(my1, 740, 790)) { // minsek
                         minsek = (minsek + 1) % 2;
                     }
-                } else if (!game) {
+                } else if (!game.isRunning()) {
                     for (int i = 0; i < 2; i++) { // time
                         for (int j = 0; j < 4; j++) {
                             if (btnsTime[i][j].isPressed(evt.getPoint())) {
@@ -305,33 +301,13 @@ public class Main extends JPanel implements Runnable {
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
             switch (key) {
-                case KeyEvent.VK_DOWN: {
-                    width -= 5;
-                    abstX = width;
-                    abstY = width;
-                    return;
-                }
-                case KeyEvent.VK_UP: {
-                    width += 5;
-                    abstX = width;
-                    abstY = width;
-                    return;
-                }
-                case KeyEvent.VK_RIGHT: {
-                    Timer.limit -= 10;
-                    return;
-                }
-                case KeyEvent.VK_ESCAPE:
-                    vorbereiten();
-                    return;
-                case KeyEvent.VK_G:
-                    printLog();
-                    return;
-                case KeyEvent.VK_H:
-                    nullLog();
-                    return;
-                default:
-                    System.out.println("Keyinput wrong");
+                case KeyEvent.VK_DOWN: width -= 5; return;
+                case KeyEvent.VK_UP: width += 5; return;
+                case KeyEvent.VK_RIGHT: Timer.limit -= 10; return;
+                case KeyEvent.VK_ESCAPE: vorbereiten(); return;
+                case KeyEvent.VK_G: printLog(); return;
+                case KeyEvent.VK_H: nullLog(); return;
+                default: System.out.println("Keyinput wrong");
             }
         }
         public void keyReleased(KeyEvent e) {
