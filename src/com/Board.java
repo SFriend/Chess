@@ -12,24 +12,24 @@ import java.util.Arrays;
 public class Board {
     private final int width;
     private Field[][] field;
+    private int move_count = 0;
+    private boolean whiteTurn = true;
 
     DoublePoint[] balance;
     ChessStones chessStones;
 
-    Move move = new Move();
-
 //    List<Piece> pieceList = new ArrayList<>();
 //    ArrayList pieces = new ArrayList<Piece>();
-    ArrayList<Piece> pieces1 = new ArrayList<Piece>();
-    ArrayList<Piece> pieces2 = new ArrayList<Piece>();
+
+    ArrayList<Piece> player1 = new ArrayList<Piece>();
+    ArrayList<Piece> player2 = new ArrayList<Piece>();
+    ArrayList[] player = {player1, player2};
+
+            Move move = new Move();
 
     public Board(int width) {
         this.width = width;
         field = new Field[width][width];
-        reset();
-    }
-
-    public void reset() {
         for (int i = 0; i < this.width; i++){
             for (int j = 0; j < this.width; j++){
                 field[i][j] = new Field(i,j);
@@ -38,10 +38,9 @@ public class Board {
         for (int i = 0; i < width; i++) {
             field[i][1].addPiece(new Pawn(i,1,true));
             field[i][6].addPiece(new Pawn(i,6,false));
-            pieces1.add(new Pawn(i,1,true));
-            pieces2.add(new Pawn(i,6,false));
+            player1.add(new Pawn(i,1,true));
+            player2.add(new Pawn(i,6,false));
         }
-
 
         field[0][0].addPiece(new Rook   (0, 0, true));
         field[1][0].addPiece(new Knight (1, 0, true));
@@ -51,14 +50,14 @@ public class Board {
         field[5][0].addPiece(new Bishop (5, 0, true));
         field[6][0].addPiece(new Knight (6, 0, true));
         field[7][0].addPiece(new Rook   (7, 0, true));
-        pieces1.add(new Rook    (0,0,true));
-        pieces1.add(new Knight  (1,0,true));
-        pieces1.add(new Bishop  (2,0,true));
-        pieces1.add(new Queen   (3,0,true));
-        pieces1.add(new King    (4,0,true));
-        pieces1.add(new Bishop  (5,0,true));
-        pieces1.add(new Knight  (6,0,true));
-        pieces1.add(new Rook    (7,0,true));
+        player1.add(new Rook    (0,0,true));
+        player1.add(new Knight  (1,0,true));
+        player1.add(new Bishop  (2,0,true));
+        player1.add(new Queen   (3,0,true));
+        player1.add(new King    (4,0,true));
+        player1.add(new Bishop  (5,0,true));
+        player1.add(new Knight  (6,0,true));
+        player1.add(new Rook    (7,0,true));
 
         field[0][7].addPiece(new Rook   (0, 7, false));
         field[1][7].addPiece(new Knight (1, 7, false));
@@ -68,33 +67,41 @@ public class Board {
         field[5][7].addPiece(new Bishop (5, 7, false));
         field[6][7].addPiece(new Knight (6, 7, false));
         field[7][7].addPiece(new Rook   (7, 7, false));
-        pieces2.add(new Rook    (0,7,false));
-        pieces2.add(new Knight  (1,7,false));
-        pieces2.add(new Bishop  (2,7,false));
-        pieces2.add(new Queen   (3,7,false));
-        pieces2.add(new King    (4,7,false));
-        pieces2.add(new Bishop  (5,7,false));
-        pieces2.add(new Knight  (6,7,false));
-        pieces2.add(new Rook    (7,7,false));
-
-//        for (Piece pc: pieces1){
-//            if(pc.getX() == 0 && pc.getY() == 1) {
-//                pc.setX(0);
-//                pc.setY(2);
-//                break;
-//            }
-//        }
-
-        balance = getBalance();
+        player2.add(new Rook    (0,7,false));
+        player2.add(new Knight  (1,7,false));
+        player2.add(new Bishop  (2,7,false));
+        player2.add(new Queen   (3,7,false));
+        player2.add(new King    (4,7,false));
+        player2.add(new Bishop  (5,7,false));
+        player2.add(new Knight  (6,7,false));
+        player2.add(new Rook    (7,7,false));
+        calcBalance();
     }
 
     public void move(int x1, int y1, int x2, int y2){
-        new Move(this, x1, y1, x2, y2);
+        move.Normal(this, x1, y1, x2, y2);
     }
 
-    public void moveStone(int x1, int y1, int x2, int y2){
-        field[x2][y2].addPiece(field[x1][y1].getPiece());
-        field[x1][y1].clearField();
+    public void randomMove(){
+        move.Random(this);
+    }
+
+    public void movePiece(int x1, int y1, int x2, int y2){
+        field[x2][y2].addPiece(field[x1][y1].takePiece());
+        for (Piece pc1 : player1) {
+            if(pc1.getX() == x1 && pc1.getY() == y1) {
+                pc1.setX(x2);
+                pc1.setY(y2);
+                for (Piece pc2 : player2){
+                    if (pc2.getX() == x2 && pc2.getY() == y2) {
+                        player2.remove(pc2);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        calcBalance();
     }
 
     public boolean isColorEqual(int x1, int y1, int x2, int y2){
@@ -106,18 +113,18 @@ public class Board {
         field[x1][y1] = fld;
     }
 
-    public DoublePoint[] getBalance() {
+    public void calcBalance() {
         double gap = 0.5;
         DoublePoint pointSum[] = {new DoublePoint(0, 0), new DoublePoint(0, 0)};
-        for (Piece pc : pieces1){
+        for (Piece pc : player1){
             pointSum[0].addPoint(pc.getX() + gap, pc.getY() + gap);
         }
-        pointSum[0].divide(pieces1.size());
+        pointSum[0].divide(player1.size());
 
-        for (Piece pc : pieces2){
+        for (Piece pc : player2){
             pointSum[1].addPoint(pc.getX() + gap, pc.getY() + gap);
         }
-        pointSum[1].divide(pieces2.size());
+        pointSum[1].divide(player2.size());
 
 
 //        for (int n = 0; n < 2; n++) {
@@ -125,14 +132,14 @@ public class Board {
 //            for (int x1 = 0; x1 < 8; x1++) {
 //                for (int y1 = 0; y1 < 8; y1++) {
 //                    if (!getField(x1, y1).isEmpty() && getField(x1, y1).isPlayer1()) {
-//                        pointSum[n].addPoint(new DoublePoint(x1+0.5, y1+0.5));
+//                        pointSum[n].addPoint(x1+gap, y1+gap);
 //                        count++;
 //                    }
 //                }
 //            }
 //            pointSum[n].divide(count);
 //        }
-        return pointSum;
+        balance = pointSum;
     }
 
     public Field getField(int x, int y) {
@@ -143,44 +150,55 @@ public class Board {
         return width;
     }
 
+    public int getMove_count() {
+        return move_count;
+    }
+
+    public void incrementMoveCount(){
+        move_count++;
+        whiteTurn = !whiteTurn;
+    }
+
+    public boolean isWhiteTurn(){
+        return whiteTurn;
+    }
+
+    public boolean isEmpty(int x, int y){
+        for (Piece piece : player1) {
+            if (piece.getX() == x && piece.getY() == y) return false;
+        }
+        for (Piece piece : player1) {
+            if (piece.getX() == x && piece.getY() == y) return false;
+        }
+        return true;
+    }
+
+    public int getPlayer(){
+        return isWhiteTurn() ? 0 : 1;
+    }
+
     public void print(){
-        for (int x = 0; x < width; x++) {
-            skip: for (int y = 0; y < width; y++) {
-                for (Piece pc : pieces1) {
+        for (int y = width-1; y >= 0; y--) {
+            skip: for (int x = 0; x < width; x++) {
+                for (Piece pc : player1) {
                     if(pc.getX() == x && pc.getY() == y) {
                         System.out.print(pc.getID() + " ");
                         continue skip;
                     }
                 }
 
-                for (Piece pc : pieces2) {
+                for (Piece pc : player2) {
                     if(pc.getX() == x && pc.getY() == y) {
                         System.out.print(pc.getID() + " ");
                         continue skip;
                     }
                 }
                 System.out.print("  ");
-
-//                if (!field[x][y].isEmpty()) System.out.print(field[x][y].getFieldID() + " ");
-//                else System.out.print("  ");
             } System.out.println();
         }
         balance[0].print();
         balance[1].print();
-    }
-
-    public boolean isEmpty(int x, int y){
-        for (Piece piece : pieces1) {
-            if (piece.getX() == x && piece.getY() == y) return false;
-        }
-        for (Piece piece : pieces1) {
-            if (piece.getX() == x && piece.getY() == y) return false;
-        }
-        return true;
-    }
-
-    public Piece getPiece(){
-        return null;
+        System.out.println("#################");
     }
 }
 

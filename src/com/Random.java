@@ -24,10 +24,10 @@ public class Random extends Logic {
 						int y2 = (int) p[1][i2][j2].getY();
 						Point temp_point2 = new Point(x1,y1);
 						if(brd.isColorEqual(x1, y1, x2, y2)) continue; // equal color
-						if(new Move(brd, x1, y1, x2, y2).isMoved()) {
-							calculating = false;
-							return;
-						}
+//						if(new Move(brd, x1, y1, x2, y2).isMoved()) {
+//							calculating = false;
+//							return;
+//						}
 					}
 				}
 			}

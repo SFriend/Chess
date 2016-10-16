@@ -6,11 +6,11 @@ package com;
 public class Field {
     private int x, y;
     private Piece piece;
-    static int test;
 
     public Field(int x, int y) {
         this.x = x;
         this.y = y;
+        this.piece = null;
     }
 
     public void placePiece(Piece piece) {
@@ -18,7 +18,20 @@ public class Field {
     }
 
     public boolean isEmpty() {
+
+//        for (Piece piece : player1) {
+//            if (piece.getX() == x && piece.getY() == y) return false;
+//        }
+//        for (Piece piece : player1) {
+//            if (piece.getX() == x && piece.getY() == y) return false;
+//        }
         return piece == null;
+    }
+
+    public Piece takePiece(){
+        Piece temp = this.piece;
+        this.piece = null;
+        return temp;
     }
 
     public void clearField() {
@@ -58,7 +71,7 @@ public class Field {
     }
 
     public boolean isPlayer1() {
-        return this.piece.player1;
+        return this.piece.white;
     }
 
     public Piece getPiece() {

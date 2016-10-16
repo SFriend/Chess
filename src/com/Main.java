@@ -40,7 +40,7 @@ public class Main extends JPanel implements Runnable {
     static Timer timeP2 = new Timer(1800);
     static Image buffer;
 
-    ChessPrint menu = new ChessPrint();
+    ChessPrint menu;
     public static Game game = new Game();
 
     public static Graphics2D gBuffer;
@@ -117,6 +117,7 @@ public class Main extends JPanel implements Runnable {
     }
 
     public void vorbereiten() {
+        menu = new ChessPrint();
         calculating = false;
         m = new Mouse();
         lastMove = new Mouse();
@@ -124,7 +125,6 @@ public class Main extends JPanel implements Runnable {
         timeP2.reset();
         for (int i = 0; i < easterEgg.length; i++)
             easterEgg[i] = true;
-        brd.reset();
 
         int l = 1310;
         int o = (800);

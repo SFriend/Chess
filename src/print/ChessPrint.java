@@ -21,8 +21,8 @@ public class ChessPrint extends Main {
 	static int quaX;
 	static int quaY = 100;
 
-	ChessStones chessStones = new ChessStones(brd);
-	ChessColor color = new ChessColor();
+//	ChessStones chessStones = new ChessStones(brd);
+//	ChessColor color = new ChessColor();
 	
 	public void print(int x1, int y1, int x2, int y2){
 		Schachfeld();
@@ -211,15 +211,15 @@ public class ChessPrint extends Main {
 				if(i == 1) gBuffer.drawString("=", width * i + (90*width/100) + abstX, width * 10 - (37*width/100) + abstY-width);
 			}
 			
-			gBuffer.setColor(Color.black);
-			gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(50)));
-			gBuffer.drawString("" + chessStones.getROW().charAt(i), width * i + scale(35) + abstX, width * 1 - scale(35) + abstY-width);
-			gBuffer.drawString("" + (8-i), width - scale(65) + abstX-width, width * (i+1) + scale(70) + abstY-width);
-			
-			gBuffer.setColor(Color.black);
-			gBuffer.setFont(new Font("Arial", Font.PLAIN, 50*width/100));
-			gBuffer.drawString("" + chessStones.getROW().charAt(i), width * i + scale(35) + abstX, width * 10 - scale(35) + abstY-width);
-			gBuffer.drawString("" + (8-i), width - scale(65) + abstX-width + width*9, width * (i+1) + scale(70) + abstY-width);
+//			gBuffer.setColor(Color.black);
+//			gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(50)));
+//			gBuffer.drawString("" + chessStones.getROW().charAt(i), width * i + scale(35) + abstX, width * 1 - scale(35) + abstY-width);
+//			gBuffer.drawString("" + (8-i), width - scale(65) + abstX-width, width * (i+1) + scale(70) + abstY-width);
+//
+//			gBuffer.setColor(Color.black);
+//			gBuffer.setFont(new Font("Arial", Font.PLAIN, 50*width/100));
+//			gBuffer.drawString("" + chessStones.getROW().charAt(i), width * i + scale(35) + abstX, width * 10 - scale(35) + abstY-width);
+//			gBuffer.drawString("" + (8-i), width - scale(65) + abstX-width + width*9, width * (i+1) + scale(70) + abstY-width);
 		}
 	}
 
@@ -295,7 +295,7 @@ public class ChessPrint extends Main {
 		gBuffer.fillOval(width * 8 + abstX + scale(5) +width, width * 6 + abstY + scale(5), width * 2 - (int)(10*width/100), width * 2 - (int)(10*width/100));
 		gBuffer.setColor(Color.yellow);
 		gBuffer.fillOval(width * 8 + abstX + (int)(10*width/100) +width, width * 6 + abstY + (int)(10*width/100), width * 2 - (int)(20*width/100), width * 2 - (int)(20*width/100));
-		if(!easterEgg[0]) chessStones.easterEggBvB2(); //TODO: integrieren
+//		if(!easterEgg[0]) chessStones.easterEggBvB2(); //TODO: integrieren
 		gBuffer.setColor(Color.gray);
 		gBuffer.fillArc(width * 8 + abstX+width, width * 6 + abstY, width * 2, width * 2, 0, (int) (((double)timeP1.getTime() / (double)timeP1.getTime()) * 360)-360);
 		gBuffer.setColor(Color.black);
@@ -323,7 +323,7 @@ public class ChessPrint extends Main {
 		gBuffer.fillOval(width * 8 + abstX+ scale(5) +width, width * 0 + abstY + scale(5), width * 2 - (int)(10*width/100), width * 2 - (int)(10*width/100));
 		gBuffer.setColor(Color.yellow);
 		gBuffer.fillOval(width * 8 + abstX+ (int)(10*width/100) +width, width * 0 + abstY + (int)(10*width/100), width * 2 - (int)(20*width/100), width * 2 - (int)(20*width/100));
-		if(!easterEgg[0]) chessStones.easterEggBvB1(); //TODO: integrieren
+//		if(!easterEgg[0]) chessStones.easterEggBvB1(); //TODO: integrieren
 		gBuffer.setColor(Color.gray);
 		gBuffer.fillArc(width * 8 + abstX+width, width * 0 + abstY, width * 2, width * 2, 0, (int) (((double)timeP2.getTime() / (double)timeP1.getTime()) * 360)-360);
 		gBuffer.setColor(Color.black);
@@ -367,11 +367,11 @@ public class ChessPrint extends Main {
 		gBuffer.setColor(Color.black);
 		gBuffer.setFont(new Font("Arial", Font.PLAIN, 40*width/100));
 		String zero = "";
-		if(game.getMove_count()<10) zero = "000";
-		else if(game.getMove_count()<100) zero = "00";
-		else if(game.getMove_count()<1000) zero = "0";
+		if(game.brd.getMove_count()<10) zero = "000";
+		else if(game.brd.getMove_count()<100) zero = "00";
+		else if(game.brd.getMove_count()<1000) zero = "0";
 		else zero = "";
-		gBuffer.drawString(zero + game.getMove_count(), (int)(width * 9.56) + abstX, width * 4 + scale(15) + abstY);
+		gBuffer.drawString(zero + game.brd.getMove_count(), (int)(width * 9.56) + abstX, width * 4 + scale(15) + abstY);
 		if(game.isRunning()){
 			gBuffer.setColor(Color.black);
 			gBuffer.setFont(new Font("Arial", Font.PLAIN, 65*width/100));

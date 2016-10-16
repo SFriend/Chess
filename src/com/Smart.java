@@ -74,6 +74,8 @@ public class Smart extends Logic {
 		int random = (int)(Math.random() * whiteMaxAmount) + 1;
 //		int random = (int)(Math.random() * max) + 1;
 		int randCount = 1;
+
+		Move move = new Move();
 		
 		final Count tCount = new Count();
 		final Count count = new Count();
@@ -89,7 +91,7 @@ public class Smart extends Logic {
 							if(canMoveCheck(brd, x1, y1, x2, y2)){
 								if(white == whiteMax){
 									if(randCount == random){
-										if(new Move(brd, x1, y1,  x2, y2).isMoved()) {
+										if(move.Normal(brd, x1, y1,  x2, y2)) {
 											System.out.println("F 1");
 											print();
 //											moveC = true;
@@ -100,7 +102,7 @@ public class Smart extends Logic {
 								} else
 								if(white >= maxGood) {
 									if(randCount == random){
-										if(new Move(brd, x1, y1,  x2, y2).isMoved()){
+										if(move.Normal(brd, x1, y1,  x2, y2)){
 											System.out.println("F 2");
 											print();
 //											moveC = true;

@@ -1,14 +1,15 @@
 package com;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Logic  {
 
 	public boolean inTheWay(Board brd, int x1, int y1, int x2, int y2) {
 		if(brd.getField(x1, y1).isKnight()) return false;
 
-		int vx = vec(x1, x2);
-		int vy = vec(y1, y2);
+		int vx = vec(x1, x2); // direction of movement x
+		int vy = vec(y1, y2); // direction of movement y
 
 		for (int i = 1; i <= 6 + 1; i++) {
 			try {
@@ -41,10 +42,8 @@ public class Logic  {
 	 * @param x2 koodinaties
      */
 	public boolean direction(Board brd, int x1, int y1, int x2, int y2){
-		if(brd.getField(x1, y1).isEmpty()) return  false;
-		if(!brd.getField(x1, y1).isPlayer1()) return false; // checks if correct (color) piece is selected //TODO palyer
+//		if(!brd.getField(x1, y1).isPlayer1()) return false; // checks if correct (color) piece is selected //TODO palyer
 		if(inTheWay(brd, x1, y1, x2, y2)) return false;
-		System.out.println(brd.getField(x1, y1).getPiece().getName()+ " " + brd.getField(x1, y1).isEmpty());
 //		if(brd[x1][y1].charAt(0) == figuren.charAt(5) && brd[x2][y2].charAt(0) == figuren.charAt(1)); //Rochade
 		return moveViable(brd, x1, y1, x2, y2);
 	}
@@ -96,7 +95,8 @@ public class Logic  {
 			}
 		} else { // target field
 			if((Math.abs(x1 - x2) == 1)){ // one step diagonal
-				if((y2 - y1) * temp == -1){ // one step
+				if((y2 - y1) * temp == 1){ // one step
+					System.out.println("123");
 					return true;
 				}
 			}
@@ -153,15 +153,21 @@ public class Logic  {
 	}
 
 	public boolean ableToMove(Board brd, int x1, int y1, int x2, int y2){
-		if(brd.isColorEqual(x1, y1, x2, y2)) return false;
-		if (!direction(brd, x1, y1, x2, y2)) return false;
+//		if(!brd.isWhiteTurn()) System.out.println("123123123123123123 "+ brd.getField(x1, y1).isEmpty() + " " + x1 + " " + y1);
+		if (brd.getField(x1, y1).isEmpty()) return false; // if empty field
+		for (Piece pc1: (ArrayList<Piece>) brd.player[brd.getPlayer()]) { // hit one pices?
+			if (pc1.getX() == x2 && pc1.getY() == y2) return false;
+		}
+		if (!direction(brd, x1, y1, x2, y2)) return false; // move viable
 		Board temp_brd = new Board(8);
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				temp_brd.getField(i, j).placePiece(brd.getField(i, j).getPiece());
 			}
 		}
-		temp_brd.moveStone(x1, y1, x2, y2);
+//		System.out.print("test 123");
+		temp_brd.movePiece(x1, y1, x2, y2);
+		temp_brd.print();
 		return !isCheck(temp_brd, 0);
 	}
 
@@ -173,7 +179,7 @@ public class Logic  {
 	public boolean isCheck(Board brd, int p){
 		for (int x2 = 0; x2 < 8; x2++) {
 			for (int y2 = 0; y2 < 8; y2++) {
-				if(brd.getField(x2, y2).isKing() && brd.getField(x2, y2).isPlayer1()){
+				if(brd.getField(x2, y2).isKing()) { // && brd.getField(x2, y2).isPlayer1()){
 					for (int x1 = 0; x1 < 8; x1++) {
 						for (int y1 = 0; y1 < 8; y1++) {
 							if(brd.getField(x1, y1).isEmpty()) continue;

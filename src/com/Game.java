@@ -11,7 +11,6 @@ public class Game {
     private boolean running = false;
     private boolean finish = true;
     private boolean paused = false;
-    private int move_count = 0;
 
     private boolean computer = false;
 
@@ -23,23 +22,22 @@ public class Game {
     private boolean computerVScomputer = computer;
     private boolean chosen = false;
 
-    public static void main(String[] args) {
-        Board brd = new Board(8);
+    public static Board brd = new Board(8);
 
-        brd.print();
-        brd.move.random(0,1,0,3);
-//        brd.move(0,1,0,3);
+    public static void main(String[] args) {
+
 //        brd.print();
-        System.out.print(brd.pieces1.remove(new Rook(0,0,true)));
+//        brd.move(0,1,0,3);
+//        brd.randomMove();
+//        brd.randomMove();
+        for (int i = 0; i < 2; i++) {
+            System.out.println(brd.isWhiteTurn());
+            brd.randomMove();
+        }
 //        EventQueue.invokeLater(new Main());
     }
 
-    public Game(){
-
-    }
-
     public void reset(){
-        move_count = 0;
         finish = true;
         paused = false;
     }
@@ -83,11 +81,18 @@ public class Game {
         return paused;
     }
 
-    public int getMove_count() {
-        return move_count;
-    }
-
     public String getLastMove() {
         return lastMove;
+    }
+}
+
+class TempI{
+    int i;
+
+    public TempI(int i){
+        this.i = i;
+    }
+    public int getI() {
+        return i;
     }
 }
