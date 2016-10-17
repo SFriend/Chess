@@ -8,8 +8,8 @@ import java.util.Random;
  * Created by pdk on 12.10.16.
  */
 public class Game {
-    private boolean running = false;
-    private boolean finish = true;
+    private boolean running = true;
+    private boolean finish = false;
     private boolean paused = false;
 
     private boolean computer = false;
@@ -24,14 +24,16 @@ public class Game {
 
     public static Board brd = new Board(8);
 
-    public static void main(String[] args) {
+    public Game() {
 
 //        brd.print();
 //        brd.move(0,1,0,3);
 //        brd.randomMove();
 //        brd.randomMove();
+        while (isRunning()) {
+            if(!brd.randomMove() && brd.getPieceNumber() > 2) finish();
+        }
         for (int i = 0; i < 2; i++) {
-            brd.randomMove();
         }
 //        EventQueue.invokeLater(new Main());
     }
@@ -82,16 +84,5 @@ public class Game {
 
     public String getLastMove() {
         return lastMove;
-    }
-}
-
-class TempI{
-    int i;
-
-    public TempI(int i){
-        this.i = i;
-    }
-    public int getI() {
-        return i;
     }
 }

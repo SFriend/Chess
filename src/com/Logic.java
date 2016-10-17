@@ -3,7 +3,7 @@ package com;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Logic  {
+public class Logic {
 
 	public boolean inTheWay(Board brd, int x1, int y1, int x2, int y2) {
 		if(brd.getField(x1, y1).isKnight()) return false;
@@ -42,7 +42,7 @@ public class Logic  {
 	 * @param x2 koodinaties
      */
 	public boolean direction(Board brd, int x1, int y1, int x2, int y2){
-//		if(!brd.getField(x1, y1).isPlayer1()) return false; // checks if correct (color) piece is selected //TODO palyer
+		if(brd.getPlayer() != (brd.getField(x1, y1).isPlayer1() ? 0:1)) return false; // checks if correct (color) piece is selected //TODO palyer
 		if(inTheWay(brd, x1, y1, x2, y2)) return false;
 //		if(brd[x1][y1].charAt(0) == figuren.charAt(5) && brd[x2][y2].charAt(0) == figuren.charAt(1)); //Rochade
 		return moveViable(brd, x1, y1, x2, y2);
@@ -90,13 +90,12 @@ public class Logic  {
 				if((y2 - y1) * temp == 1) // one step
 					return true;
 				else if((y2 - y1) * temp == 2) // two steps
-					if((y1 == 3.5 + (temp * -2.5))) // in beginning posistion white (6) black (1)
+					if((y1 == 3.5 + (temp * -2.5))) // in beginning position white (6) black (1)
 						return true;
 			}
 		} else { // target field
-			if((Math.abs(x1 - x2) == 1)){ // one step diagonal
-				if((y2 - y1) * temp == 1){ // one step
-					System.out.println("123");
+			if((Math.abs(x1 - x2) == 1)){ // diagonal
+				if((y2 - y1) * temp == 1){ // forward
 					return true;
 				}
 			}
@@ -160,42 +159,53 @@ public class Logic  {
 		}
 		if (!direction(brd, x1, y1, x2, y2)) return false; // move viable
 
-		Board temp_brd = brd;
-//		temp_brd.player = brd.player;
-//		temp_brd.b
+		Board temp_brd = new Board(8);
+        temp_brd.clone(brd); //new Board(8);
 //		for (int i = 0; i < 8; i++) {
 //			for (int j = 0; j < 8; j++) {
 //				temp_brd.getField(i, j).placePiece(brd.getField(i, j).getPiece());
 //			}
 //		}
-//		System.out.print("test 123");
-		System.out.println(temp_brd.getPlayer());
-		temp_brd.movePiece(x1, y1, x2, y2);
-		if(!temp_brd.isWhiteTurn()) {
-			System.out.println("+++++++");
-			temp_brd.print();
-		}
-		return !isCheck(temp_brd, 0);
+        temp_brd.movePiece(x1, y1, x2, y2);
+//        System.out.println("##############################################");
+//        temp_brd.print();
+//        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
+//        brd.print();
+		return !isCheck(temp_brd);
 	}
 
 	/**
 	 * return true if 0 (black) or 1 (white) is in check
-	 * @param p 0 (black) 1 (white)
 	 * @return true -> check
 	 */
-	public boolean isCheck(Board brd, int p){
+	public boolean isCheck(Board brd){
+//        for (Piece pc2 : (ArrayList<Piece>) brd.player[brd.getPlayer()]) {
+//            if (pc2 instanceof King) {
+//                for (Piece pc1 : (ArrayList<Piece>) brd.player[1-brd.getPlayer()]) {
+//                    if (!inTheWay(brd, pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY())) {
+//                        if(direction(brd, pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY()))
+//                            return true;
+//                    }
+//                }
+//            }
+//        }
+//        return false;
+
 		for (int x2 = 0; x2 < 8; x2++) {
 			for (int y2 = 0; y2 < 8; y2++) {
-				if(brd.getField(x2, y2).isKing()) { // && brd.getField(x2, y2).isPlayer1()){
+				if(brd.getField(x2, y2).isKing() && brd.getPlayer() == (brd.getField(x2, y2).isPlayer1() ? 0 : 1)) {
 					for (int x1 = 0; x1 < 8; x1++) {
 						for (int y1 = 0; y1 < 8; y1++) {
-							if(brd.getField(x1, y1).isEmpty()) continue;
-							if(!brd.isColorEqual(x1, y1, x2, y2)) {
-								if (!inTheWay(brd, x1, y1, x2, y2)) {
-									if(direction(brd, x1, y1, x2, y2))
-										return true;
-								}
-							}
+							if(!brd.getField(x1, y1).isEmpty()) {
+                                if(brd.getPlayer() != (brd.getField(x1, y1).isPlayer1() ? 0 : 1)) {
+//                                    if (!brd.isColorEqual(x1, y1, x2, y2)) {
+                                        if (!inTheWay(brd, x1, y1, x2, y2)) {
+                                            if (direction(brd, x1, y1, x2, y2))
+                                                return true;
+                                        }
+//                                    }
+                                }
+                            }
 						}
 					}
 				}

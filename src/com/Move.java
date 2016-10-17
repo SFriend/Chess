@@ -15,17 +15,17 @@ public class Move extends Logic {
 		if(x1 == x2 && y1 == y2) return false; // move to same field
 		if(ableToMove(brd, x1, y1, x2, y2)) {
 			String temp = "" + brd.getField(x1, y1).getPiece().getName().charAt(0); // piece p1
-			temp += noation.charAt(x1) + "" + (y1+1); // move 1
-			temp += brd.getField(x2,y2).isEmpty() ? "- " : "x"+brd.getField(x2, y2).getPiece().getName().charAt(0); // piece p2
-			temp += noation.charAt(x2) + "" + (y1+1); // move 2
+			temp += noation.charAt(x1) + "" + (y1 + 1); // move 1
+			temp += brd.getField(x2, y2).isEmpty() ? "- " : "x"+brd.getField(x2, y2).getPiece().getName().charAt(0); // piece p2
+			temp += noation.charAt(x2) + "" + (y1 + 1); // move 2
 			brd.movePiece(x1, y1, x2, y2); // moves
 			brd.print();
-			if(isCheck(brd, 0)) temp += "+";
+			if(isCheck(brd)) temp += "+";
 			System.out.println(temp);
 
-			if(brd.getField(x2,y2).isPawn()){ // pawn to special piece
+			if(brd.getField(x2, y2).isPawn()){ // pawn to special piece
 				if(y2 == 0 || y2 == 7){
-					int randomStone = (int)(Math.random()*(6 - 1) + 1);
+					int randomStone = (int)(Math.random() * (5 - 1) + 1);
 //					brd.setField(x2, y2, new Field(x2, y2).addPiece(null)));
 //					brd.getField(p2).setString(figuren.charAt(randomStone)+ "" + brd.getField(p2).getColor());
 				}
@@ -36,7 +36,7 @@ public class Move extends Logic {
 		return false;
 	}
 
-	public void Random(Board brd){
+	public boolean Random(Board brd){
 		Point[][][] p = generatePointArray();
 		randomizePointArray(p);
 		calculating = true;
@@ -55,7 +55,7 @@ public class Move extends Logic {
 								if (Normal(brd, x1, y1, x2, y2)) {
 									calculating = false;
 									System.out.println("found " + x1 + " " + y1 + " " + x2 + " " + y2);
-									return;
+									return true;
 								}
 							}
 						}
@@ -65,6 +65,7 @@ public class Move extends Logic {
 		}
 		System.out.print("no move found");
 		calculating = false;
+		return false;
 	}
 
 	public Point[][][] generatePointArray(){

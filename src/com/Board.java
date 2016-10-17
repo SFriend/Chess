@@ -5,6 +5,7 @@ import print.ChessStones;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by pdk on 12.10.16.
@@ -16,10 +17,6 @@ public class Board {
     private boolean whiteTurn = true;
 
     DoublePoint[] balance;
-    ChessStones chessStones;
-
-//    List<Piece> pieceList = new ArrayList<>();
-//    ArrayList pieces = new ArrayList<Piece>();
 
     ArrayList<Piece> player1 = new ArrayList<Piece>();
     ArrayList<Piece> player2 = new ArrayList<Piece>();
@@ -82,8 +79,8 @@ public class Board {
         move.Normal(this, x1, y1, x2, y2);
     }
 
-    public void randomMove(){
-        move.Random(this);
+    public boolean randomMove(){
+        return move.Random(this);
     }
 
     public void movePiece(int x1, int y1, int x2, int y2){
@@ -173,6 +170,21 @@ public class Board {
         return true;
     }
 
+//    public boolean isEmpty2(int x, int y){
+//        for (int n = 0; n < 2; n++) {
+//            for (Piece pc: (ArrayList<Piece>) player[n]) {
+//
+//                System.out.print("");
+//            }
+//        }
+//        for (int n = 0; n < 2; n++) {
+//            for (Piece piece : (ArrayList<Piece>) player[n]) {
+//                if (piece.getX() == x && piece.getY() == y) return false;
+//            }
+//        }
+//        return true;
+//    }
+
     public int getPlayer(){
         return isWhiteTurn() ? 0 : 1;
     }
@@ -180,25 +192,45 @@ public class Board {
     public void print(){
         for (int y = width-1; y >= 0; y--) {
             skip: for (int x = 0; x < width; x++) {
-                for (Piece pc : player1) {
-                    if(pc.getX() == x && pc.getY() == y) {
-                        System.out.print(pc.getID() + " ");
-                        continue skip;
+                for (int n = 0; n < 2; n++) {
+                    for (Piece pc : (ArrayList<Piece>) player[n]) {
+                        if(pc.getX() == x && pc.getY() == y) {
+                            System.out.print(pc.getName().charAt(0) + "" + n + " ");
+                            continue skip;
+                        }
                     }
-                }
-
-                for (Piece pc : player2) {
-                    if(pc.getX() == x && pc.getY() == y) {
-                        System.out.print(pc.getID() + " ");
-                        continue skip;
-                    }
-                }
-                System.out.print("  ");
+                } System.out.print("   ");
+            } System.out.print(" | ");
+            for (int i = 0; i < 8; i++) {
+                if(!field[i][y].isEmpty())
+                    System.out.print(field[i][y].getPiece().getName().charAt(0)+ "" + (field[i][y].getPiece().isWhite() ? 0: 1) + " ");
+                else System.out.print("   ");
             } System.out.println();
         }
         balance[0].print();
         balance[1].print();
+        System.out.println("Stones: " + (player1.size() + player2.size()));
         System.out.println("#################");
+
+    }
+
+    public Board clone(Board brd) {
+        Board temp_brd = new Board(width);
+
+        temp_brd.field = brd.field;
+        temp_brd.move_count = brd.move_count;
+        temp_brd.whiteTurn = brd.whiteTurn;
+
+        temp_brd.balance = brd.balance;
+
+//        temp_brd.player1 = new ArrayList<Piece>();
+//        temp_brd.player2 = new ArrayList<Piece>();
+        temp_brd.player = brd.player; //{player1, player2};
+        return temp_brd;
+    }
+
+    public int getPieceNumber(){
+        return player1.size()+player2.size();
     }
 }
 
