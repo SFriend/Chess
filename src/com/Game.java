@@ -31,7 +31,6 @@ public class Game {
 //        brd.randomMove();
 //        brd.randomMove();
         for (int i = 0; i < 2; i++) {
-            System.out.println(brd.isWhiteTurn());
             brd.randomMove();
         }
 //        EventQueue.invokeLater(new Main());

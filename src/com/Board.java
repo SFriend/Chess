@@ -88,13 +88,14 @@ public class Board {
 
     public void movePiece(int x1, int y1, int x2, int y2){
         field[x2][y2].addPiece(field[x1][y1].takePiece());
-        for (Piece pc1 : player1) {
+        for (Piece pc1 : (ArrayList<Piece>) player[getPlayer()]) {
             if(pc1.getX() == x1 && pc1.getY() == y1) {
                 pc1.setX(x2);
                 pc1.setY(y2);
-                for (Piece pc2 : player2){
+                System.out.println("set piece");
+                for (Piece pc2 : (ArrayList<Piece>) player[1-getPlayer()]){
                     if (pc2.getX() == x2 && pc2.getY() == y2) {
-                        player2.remove(pc2);
+                        player[1-getPlayer()].remove(pc2);
                         break;
                     }
                 }
@@ -164,11 +165,10 @@ public class Board {
     }
 
     public boolean isEmpty(int x, int y){
-        for (Piece piece : player1) {
-            if (piece.getX() == x && piece.getY() == y) return false;
-        }
-        for (Piece piece : player1) {
-            if (piece.getX() == x && piece.getY() == y) return false;
+        for (int n = 0; n < 2; n++) {
+            for (Piece piece : (ArrayList<Piece>) player[n]) {
+                if (piece.getX() == x && piece.getY() == y) return false;
+            }
         }
         return true;
     }

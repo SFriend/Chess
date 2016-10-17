@@ -153,21 +153,28 @@ public class Logic  {
 	}
 
 	public boolean ableToMove(Board brd, int x1, int y1, int x2, int y2){
-//		if(!brd.isWhiteTurn()) System.out.println("123123123123123123 "+ brd.getField(x1, y1).isEmpty() + " " + x1 + " " + y1);
-		if (brd.getField(x1, y1).isEmpty()) return false; // if empty field
+//		if(!brd.isWhiteTurn()) System.out.println("123123123123123123 "+ brd.isEmpty(x1, y1) + " " + x1 + " " + y1);
+		if (brd.isEmpty(x1, y1)) return false; // if empty field
 		for (Piece pc1: (ArrayList<Piece>) brd.player[brd.getPlayer()]) { // hit one pices?
 			if (pc1.getX() == x2 && pc1.getY() == y2) return false;
 		}
 		if (!direction(brd, x1, y1, x2, y2)) return false; // move viable
-		Board temp_brd = new Board(8);
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				temp_brd.getField(i, j).placePiece(brd.getField(i, j).getPiece());
-			}
-		}
+
+		Board temp_brd = brd;
+//		temp_brd.player = brd.player;
+//		temp_brd.b
+//		for (int i = 0; i < 8; i++) {
+//			for (int j = 0; j < 8; j++) {
+//				temp_brd.getField(i, j).placePiece(brd.getField(i, j).getPiece());
+//			}
+//		}
 //		System.out.print("test 123");
+		System.out.println(temp_brd.getPlayer());
 		temp_brd.movePiece(x1, y1, x2, y2);
-		temp_brd.print();
+		if(!temp_brd.isWhiteTurn()) {
+			System.out.println("+++++++");
+			temp_brd.print();
+		}
 		return !isCheck(temp_brd, 0);
 	}
 
