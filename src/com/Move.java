@@ -14,9 +14,17 @@ public class Move {
 	public boolean Normal (Board brd, int x1, int y1, int x2, int y2) {
 		if(x1 == x2 && y1 == y2) return false; // move to same field
 		if(new Logic(brd, x1, y1, x2, y2).ableToMove()) {
-			String temp = "" + brd.getField(x1, y1).getPiece().getName().charAt(0); // piece p1
+			String temp = "";
+			for (Piece pc1: brd.playerStones[brd.getPlayer()]) { // piece p1
+				if (pc1.getX() == x1 && pc1.getY() == y1)
+					temp += pc1.getName().charAt(0);
+			}
 			temp += noation.charAt(x1) + "" + (y1 + 1); // move 1
-			temp += brd.getField(x2, y2).isEmpty() ? "- " : "x"+brd.getField(x2, y2).getPiece().getName().charAt(0); // piece p2
+			temp += brd.isEmpty(x2, y2) ? "- " : "x";
+			for (Piece pc2: brd.playerStones[1-brd.getPlayer()]) { // piece p1
+				if (pc2.getX() == x1 && pc2.getY() == y1)
+					temp += pc2.getName().charAt(0);
+			}
 			temp += noation.charAt(x2) + "" + (y1 + 1); // move 2
 			brd.movePiece(x1, y1, x2, y2); // moves
 			brd.print();
@@ -44,7 +52,7 @@ public class Move {
 			for (int j1 = 0; j1 < 8; j1++) {
 				int x1 = (int) p[0][i1][j1].getX();
 				int y1 = (int) p[0][i1][j1].getY();
-				for (Piece pc1 : brd.player[brd.getPlayer()]) {
+				for (Piece pc1 : brd.playerStones[brd.getPlayer()]) {
 					if (pc1.getX() == x1 && pc1.getY() == y1) {
 						for (int i2 = 0; i2 < 8; i2++) {
 							for (int j2 = 0; j2 < 8; j2++) {

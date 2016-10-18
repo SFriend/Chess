@@ -49,7 +49,7 @@ public class Smart {
 	public void checkForBestMove(){
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
-				if(brd.getField(x1, y1).isEmpty()) continue; // || brd[x1][y1].charAt(1) == charC[0]) continue;
+				if(brd.isEmpty(x1, y1)) continue; // || brd[x1][y1].charAt(1) == charC[0]) continue;
 				for(int x2 = 0; x2 < 8; x2++){
 					for(int y2 = 0; y2 < 8; y2++){
 						if(brd.isColorEqual(x1, y1,x2, y2)) continue;
@@ -81,7 +81,7 @@ public class Smart {
 		final Count count = new Count();
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
-				if(brd.getField(x1, y1).isEmpty()) continue;
+//				if(brd.getField(x1, y1).isEmpty()) continue;
 				for(int x2 = 0; x2 < 8; x2++){
 					for(int y2 = 0; y2 < 8; y2++){
 						if(x1 == x2 && y1 == y2) continue;
@@ -163,13 +163,15 @@ public class Smart {
 	public void searchForMax(){
 		black = 0;
 		white = 0;
-		for(int i = 0; i < 8; i++){
-			for(int j = 0; j < 8; j++){
-				if(brd.getField(i, j).isPlayer1()) {
-					white += posibleMoves[i][j];
-				}
-				if(!brd.getField(i, j).isPlayer1()) {
-					black += posibleMoves[i][j];
+		for(int x1 = 0; x1 < 8; x1++){
+			for(int y1 = 0; y1 < 8; y1++){
+				for (int n = 0; n < 2; n++) {
+					for (Piece pc: brd.getPlayerStones()[n]) {
+						if(pc.getX() == x1 && pc.getY() == y1) {
+							if (n == 0) white += posibleMoves[x1][y1];
+							else black += posibleMoves[x1][y1];
+						}
+					}
 				}
 			}
 		}
@@ -186,7 +188,7 @@ public class Smart {
 		}
 		for(int i = 0; i < 8; i++){
 			for(int j = 0; j < 8; j++){
-				if(brd.getField(i, j).isEmpty()) continue;
+//				if(brd.getField(i, j).isEmpty()) continue;
 //				posibleMoves[i][j] = support(i, j) + enemy(i, j) + enemyHit(i, j);
 			}
 		}
@@ -194,7 +196,7 @@ public class Smart {
 	}
 	
 	boolean imWegSupport(int x1, int y1, int x2, int y2) {
-		if(brd.getField(x1, y2).isKnight()) return false;
+//		if(brd.getField(x1, y2).isKnight()) return false;
 		
 		int vx = new Logic(brd,x1,y1,x2,y2).vec(x1,x2);
 		int vy = new Logic(brd,x1,y1,x2,y2).vec(y1,y2);
@@ -202,7 +204,7 @@ public class Smart {
 		for (int i = 1; i <= 7; i++) {
 			try {
 				if ((x1 + (vx*i)) == x2 && (y1 + (vy * i)) == y2) return false;
-				if (brd.getField((x1 + (vx * i)), (y1 + (vy * i))).isEmpty()) continue;
+//				if (brd.getField((x1 + (vx * i)), (y1 + (vy * i))).isEmpty()) continue;
 				else return true;
 			} catch (Exception e) { }
 		}
@@ -214,7 +216,7 @@ public class Smart {
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
 				if(x1 == x2 && y1 == y2) continue;
-				if(brd.getField(x1, y1).isEmpty()) continue;
+//				if(brd.getField(x1, y1).isEmpty()) continue;
 				if(!brd.isColorEqual(x1, y1,  x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2))
 					sup++;
@@ -228,10 +230,10 @@ public class Smart {
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
 				if(x1 == x2 && y1 == y2) continue;
-				if(brd.getField(x1, y1).isEmpty()) continue;
+//				if(brd.getField(x1, y1).isEmpty()) continue;
 				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2)) {
-					enemy += values_stones[brd.getField(x1, y1).getPiece().getValue()];
+//					enemy += values_stones[brd.getField(x1, y1).getPiece().getValue()];
 
 //					char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
 //					if(ch == figuren.charAt(0)) enemy-=1;
@@ -257,10 +259,10 @@ public class Smart {
 		for(int x2 = 0; x2 < 8; x2++){
 			for(int y2 = 0; y2 < 8; y2++){
 				if(x1 == x2 && y1 == y2) continue;
-				if(brd.getField( x2, y2).isEmpty()) continue;
+//				if(brd.getField( x2, y2).isEmpty()) continue;
 				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2)) {
-					enemyHit += values_stones[brd.getField(x1, y1).getPiece().getValue()];
+//					enemyHit += values_stones[brd.getField(x1, y1).getPiece().getValue()];
 
 //					char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
 //					if(ch == figuren.charAt(0)) enemyHit+=6;

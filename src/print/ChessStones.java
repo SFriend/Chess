@@ -2,6 +2,7 @@ package print;
 
 import com.Board;
 import com.Main;
+import com.Piece;
 
 import java.awt.*;
 
@@ -14,13 +15,13 @@ public class ChessStones {
 	ChessColor cc = new ChessColor();
 	public ChessStones(Board brd) {
 		for (int x1 = 0; x1 < 8; x1++) {
-			for (int y1 = 0; y1 < 8; y1++) {
-				if (brd.getField(x1, y1).isPlayer1())
-					gBuffer.setColor(cc.getPlayer1());
-				else if (!brd.getField(x1, y1).isPlayer1())
-					gBuffer.setColor(cc.getPlayer2());
-				else
-					continue;
+			for (int y1 = 0; y1 < 8; y1++) { //TODO color
+//				if (brd.isWhiteTurn())
+//					gBuffer.setColor(cc.getPlayer1());
+//				else if (!brd.getField(x1, y1).isPlayer1())
+//					gBuffer.setColor(cc.getPlayer2());
+//				else
+//					continue;
 //				gBuffer.fillOval(i*width + width, j*width + width, width, width);
 //				gBuffer.setColor(Color.green);
 //				gBuffer.setFont(new Font("Arial", Font.PLAIN, 80*width/100));
@@ -29,14 +30,18 @@ public class ChessStones {
 
 				int x2 = x1 * width;
 				int y2 = y1 * width;
-				switch(brd.getField(x2,y2).getPiece().getID()){
-					case 0 : pawn(x2, y2); break;
-					case 1 : rook(x2, y2); break;
-					case 2 : knight(x2, y2); break;
-					case 3 : bishop(x2, y2); break;
-					case 4 : queen(x2, y2); break;
-					case 5 : king(x2, y2); break;
-					default: System.out.println("not listed"); break;
+				for (Piece pc: brd.getPlayerStones()[brd.getPlayer()]) {
+					if(pc.getX() == x1 && pc.getY() == y1) {
+						switch(pc.getID()){
+							case 0 : pawn(x2, y2); break;
+							case 1 : rook(x2, y2); break;
+							case 2 : knight(x2, y2); break;
+							case 3 : bishop(x2, y2); break;
+							case 4 : queen(x2, y2); break;
+							case 5 : king(x2, y2); break;
+							default: System.out.println("not listed"); break;
+						}
+					}
 				}
 			}
 		}
