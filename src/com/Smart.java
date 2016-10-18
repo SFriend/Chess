@@ -4,7 +4,7 @@ import com.elo.Elo;
 
 import java.awt.*;
 
-public class Smart extends Logic {
+public class Smart {
 	int posibleMoves[][] = new int[8][8];
 	int white, black;
 	int amount;
@@ -196,8 +196,8 @@ public class Smart extends Logic {
 	boolean imWegSupport(int x1, int y1, int x2, int y2) {
 		if(brd.getField(x1, y2).isKnight()) return false;
 		
-		int vx = vec(x1,x2);
-		int vy = vec(y1,y2);
+		int vx = new Logic(brd,x1,y1,x2,y2).vec(x1,x2);
+		int vy = new Logic(brd,x1,y1,x2,y2).vec(y1,y2);
 
 		for (int i = 1; i <= 7; i++) {
 			try {
@@ -280,7 +280,7 @@ public class Smart extends Logic {
 		
 //		if(brd.getField(x1, y1).getPiece() == 5) return true; //mal schauen ob das geht--!!
 
-		if(ableToMove(brd, x1, y1,  x2, y2)){
+		if(new Logic(brd,x1,y1,x2,y2).ableToMove()){
 			check();
 			amount++;
 			return true;
@@ -291,13 +291,13 @@ public class Smart extends Logic {
 	public boolean canMoveCheck(Board brd, int x1, int y1, int x2, int y2){
 		if (!richtungSupport(brd, x1, y1, x2, y2)) return false;
 
-		return (ableToMove(brd, x1, y1,  x2, y2));
+		return new Logic(brd,x1,y1,x2,y2).ableToMove();
 	}
 	
 	public boolean richtungSupport(Board brd, int x1, int y1, int x2, int y2){
 //		char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
 
-		return moveViable(brd, x1, y1,  x2, y2);
+		return new Logic(brd,x1,y1,x2,y2).moveViable();
 	}
 }
 

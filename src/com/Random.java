@@ -2,8 +2,7 @@ package com;
 
 import java.awt.*;
 
-public class Random extends Logic {
-	Logic logic = new Logic();
+public class Random {
 	final int maxThreads = 8;
 	boolean calculating = false;
 

@@ -3,7 +3,7 @@ package com;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Move extends Logic {
+public class Move {
 	boolean calculating = false;
 
 	String noation = "abcdefgh";
@@ -13,14 +13,14 @@ public class Move extends Logic {
      */
 	public boolean Normal (Board brd, int x1, int y1, int x2, int y2) {
 		if(x1 == x2 && y1 == y2) return false; // move to same field
-		if(ableToMove(brd, x1, y1, x2, y2)) {
+		if(new Logic(brd, x1, y1, x2, y2).ableToMove()) {
 			String temp = "" + brd.getField(x1, y1).getPiece().getName().charAt(0); // piece p1
 			temp += noation.charAt(x1) + "" + (y1 + 1); // move 1
 			temp += brd.getField(x2, y2).isEmpty() ? "- " : "x"+brd.getField(x2, y2).getPiece().getName().charAt(0); // piece p2
 			temp += noation.charAt(x2) + "" + (y1 + 1); // move 2
 			brd.movePiece(x1, y1, x2, y2); // moves
 			brd.print();
-			if(isCheck(brd)) temp += "+";
+			if(new Logic(brd, x1, y1, x2, y2).isCheck(brd)) temp += "+";
 			System.out.println(temp);
 
 //			if(brd.getField(x2, y2).isPawn()){ // pawn to special piece
@@ -36,7 +36,7 @@ public class Move extends Logic {
 		return false;
 	}
 
-	public boolean Random(Board brd) {
+	public boolean Random(Board brd) { // TODO random with arraylist -> picks one piece
 		Point[][][] p = generatePointArray();
 		randomizePointArray(p);
 		calculating = true;
