@@ -4,7 +4,7 @@ package com;
  * Created by pdk on 10.10.16.
  */
 public class Piece {
-    private String[] figures = {"Pawn", "Rook", "Knight", "Bishop", "Queen", "King"};
+    private String[] figures = {"Pawn", "Rook", "Knight", "Bishop", "Queen", "king"};
     private int x;
     private int y;
     private int value;

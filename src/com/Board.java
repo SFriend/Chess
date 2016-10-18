@@ -10,7 +10,7 @@ import java.util.concurrent.SynchronousQueue;
 /**
  * Created by pdk on 12.10.16.
  */
-public class Board {
+public class Board implements Cloneable {
     private final int width;
     private Field[][] field;
     private int move_count = 0;
@@ -20,11 +20,13 @@ public class Board {
 
     ArrayList<Piece> player1 = new ArrayList<Piece>();
     ArrayList<Piece> player2 = new ArrayList<Piece>();
-    ArrayList[] player = {player1, player2};
+    ArrayList<Piece>[] player = (ArrayList<Piece>[]) new ArrayList[2];
 
-            Move move = new Move();
+    Move move = new Move();
 
     public Board(int width) {
+        player[0] = player1;
+        player[1] = player2;
         this.width = width;
         field = new Field[width][width];
         for (int i = 0; i < this.width; i++){
@@ -75,22 +77,17 @@ public class Board {
         calcBalance();
     }
 
-    public void move(int x1, int y1, int x2, int y2){
-        move.Normal(this, x1, y1, x2, y2);
-    }
-
     public boolean randomMove(){
         return move.Random(this);
     }
 
     public void movePiece(int x1, int y1, int x2, int y2){
         field[x2][y2].addPiece(field[x1][y1].takePiece());
-        for (Piece pc1 : (ArrayList<Piece>) player[getPlayer()]) {
+        for (Piece pc1 : player[getPlayer()]) {
             if(pc1.getX() == x1 && pc1.getY() == y1) {
                 pc1.setX(x2);
                 pc1.setY(y2);
-                System.out.println("set piece");
-                for (Piece pc2 : (ArrayList<Piece>) player[1-getPlayer()]){
+                for (Piece pc2 : player[1-getPlayer()]){
                     if (pc2.getX() == x2 && pc2.getY() == y2) {
                         player[1-getPlayer()].remove(pc2);
                         break;
@@ -103,40 +100,30 @@ public class Board {
     }
 
     public boolean isColorEqual(int x1, int y1, int x2, int y2){
-        if(field[x2][y2].isEmpty()) return false;
-        return field[x1][y1].isPlayer1() == field[x2][y2].isPlayer1();
-    }
-
-    public void setField(int x1, int y1, Field fld) {
-        field[x1][y1] = fld;
+        for (Piece pc1 : player[getPlayer()]) {
+            if(pc1.getX() == x1 && pc1.getY() == y1) {
+                for (Piece pc2 : player[getPlayer()]){
+                    if (pc2.getX() == x2 && pc2.getY() == y2) {
+                        return true;
+                    }
+                }
+                break;
+            }
+        }
+        return false;
+//        if(field[x2][y2].isEmpty()) return false;
+//        return field[x1][y1].isPlayer1() == field[x2][y2].isPlayer1();
     }
 
     public void calcBalance() {
         double gap = 0.5;
         DoublePoint pointSum[] = {new DoublePoint(0, 0), new DoublePoint(0, 0)};
-        for (Piece pc : player1){
-            pointSum[0].addPoint(pc.getX() + gap, pc.getY() + gap);
+        for (int n = 0; n < 2; n++) {
+            for (Piece pc : player[n]) {
+                pointSum[n].addPoint(pc.getX() + gap, pc.getY() + gap);
+            }
+            pointSum[n].divide(player[n].size());
         }
-        pointSum[0].divide(player1.size());
-
-        for (Piece pc : player2){
-            pointSum[1].addPoint(pc.getX() + gap, pc.getY() + gap);
-        }
-        pointSum[1].divide(player2.size());
-
-
-//        for (int n = 0; n < 2; n++) {
-//            int count = 0;
-//            for (int x1 = 0; x1 < 8; x1++) {
-//                for (int y1 = 0; y1 < 8; y1++) {
-//                    if (!getField(x1, y1).isEmpty() && getField(x1, y1).isPlayer1()) {
-//                        pointSum[n].addPoint(x1+gap, y1+gap);
-//                        count++;
-//                    }
-//                }
-//            }
-//            pointSum[n].divide(count);
-//        }
         balance = pointSum;
     }
 
@@ -163,7 +150,7 @@ public class Board {
 
     public boolean isEmpty(int x, int y){
         for (int n = 0; n < 2; n++) {
-            for (Piece piece : (ArrayList<Piece>) player[n]) {
+            for (Piece piece : player[n]) {
                 if (piece.getX() == x && piece.getY() == y) return false;
             }
         }
@@ -193,7 +180,7 @@ public class Board {
         for (int y = width-1; y >= 0; y--) {
             skip: for (int x = 0; x < width; x++) {
                 for (int n = 0; n < 2; n++) {
-                    for (Piece pc : (ArrayList<Piece>) player[n]) {
+                    for (Piece pc : player[n]) {
                         if(pc.getX() == x && pc.getY() == y) {
                             System.out.print(pc.getName().charAt(0) + "" + n + " ");
                             continue skip;
@@ -209,28 +196,29 @@ public class Board {
         }
         balance[0].print();
         balance[1].print();
-        System.out.println("Stones: " + (player1.size() + player2.size()));
-        System.out.println("#################");
+        System.out.println("Stones: " + (player[0].size() + player[1].size()));
+        System.out.println("################# " + getMove_count());
 
     }
 
-    public Board clone(Board brd) {
-        Board temp_brd = new Board(width);
-
-        temp_brd.field = brd.field;
-        temp_brd.move_count = brd.move_count;
-        temp_brd.whiteTurn = brd.whiteTurn;
-
-        temp_brd.balance = brd.balance;
-
-//        temp_brd.player1 = new ArrayList<Piece>();
-//        temp_brd.player2 = new ArrayList<Piece>();
-        temp_brd.player = brd.player; //{player1, player2};
-        return temp_brd;
-    }
+//    public Board clone(Board brd) {
+//        Board temp_brd = new Board(width);
+//        temp_brd.field = brd.field;
+//        temp_brd.move_count = brd.move_count;
+//        temp_brd.whiteTurn = brd.whiteTurn;
+//        temp_brd.balance = brd.balance;
+//        temp_brd.player = brd.player; //{player1, player2};
+//        return temp_brd;
+//    }
 
     public int getPieceNumber(){
         return player1.size()+player2.size();
+    }
+
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
 

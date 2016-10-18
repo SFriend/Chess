@@ -46,7 +46,6 @@ public class Game {
     double randomGenerator(long seed) {
         Random generator = new Random(seed);
         double num = generator.nextDouble() * (1.0);
-
         return num;
     }
 

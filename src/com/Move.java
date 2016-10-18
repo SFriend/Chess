@@ -23,20 +23,20 @@ public class Move extends Logic {
 			if(isCheck(brd)) temp += "+";
 			System.out.println(temp);
 
-			if(brd.getField(x2, y2).isPawn()){ // pawn to special piece
-				if(y2 == 0 || y2 == 7){
-					int randomStone = (int)(Math.random() * (5 - 1) + 1);
-//					brd.setField(x2, y2, new Field(x2, y2).addPiece(null)));
-//					brd.getField(p2).setString(figuren.charAt(randomStone)+ "" + brd.getField(p2).getColor());
-				}
-			}
+//			if(brd.getField(x2, y2).isPawn()){ // pawn to special piece
+//				if(y2 == 0 || y2 == 7){
+//					int randomStone = (int)(Math.random() * (5 - 1) + 1);
+////					brd.setField(x2, y2, new Field(x2, y2).addPiece(null)));
+////					brd.getField(p2).setString(figuren.charAt(randomStone)+ "" + brd.getField(p2).getColor());
+//				}
+//			}
 			brd.incrementMoveCount();
 			return true;
 		}
 		return false;
 	}
 
-	public boolean Random(Board brd){
+	public boolean Random(Board brd) {
 		Point[][][] p = generatePointArray();
 		randomizePointArray(p);
 		calculating = true;
@@ -44,12 +44,10 @@ public class Move extends Logic {
 			for (int j1 = 0; j1 < 8; j1++) {
 				int x1 = (int) p[0][i1][j1].getX();
 				int y1 = (int) p[0][i1][j1].getY();
-				for (Piece pc1 : (ArrayList<Piece>) brd.player[brd.getPlayer()]) {
+				for (Piece pc1 : brd.player[brd.getPlayer()]) {
 					if (pc1.getX() == x1 && pc1.getY() == y1) {
 						for (int i2 = 0; i2 < 8; i2++) {
 							for (int j2 = 0; j2 < 8; j2++) {
-//								System.out.print("found 1");
-
 								int x2 = (int) p[1][i2][j2].getX();
 								int y2 = (int) p[1][i2][j2].getY();
 								if (Normal(brd, x1, y1, x2, y2)) {
@@ -124,18 +122,14 @@ public class Move extends Logic {
 //			brd.setField(new Point(x2,y2), new Field(null));
 //		player--;
 
-		// String boardTemp1 = board[x1][y1];
-		// String boardTemp2 = board[x2][y2];
-		//
-		// board[x2][y2] = board[x1][y1];
-		// //if(log[recreateGame].charAt(index))
-		// board[x1][y1] = " ";
-		//
-		// moves[x2][y2] = moves[x1][y1] + 1;
-		// moves[x1][y1] = 0;
-	}
-
-	public String[][] move(String[][] brd){
-		return brd;
+//		 String boardTemp1 = board[x1][y1];
+//		 String boardTemp2 = board[x2][y2];
+//
+//		 board[x2][y2] = board[x1][y1];
+//		 //if(log[recreateGame].charAt(index))
+//		 board[x1][y1] = " ";
+//
+//		 moves[x2][y2] = moves[x1][y1] + 1;
+//		 moves[x1][y1] = 0;
 	}
 }
