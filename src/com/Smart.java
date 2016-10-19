@@ -3,31 +3,51 @@ package com;
 import com.elo.Elo;
 
 import java.awt.*;
+import java.util.Arrays;
 
-public class Smart {
-	int posibleMoves[][] = new int[8][8];
-	int white, black;
-	int amount;
-	int whiteMax, whiteMaxAmount;
-	final int maxGood = 0;
-	int max;
-
-	static Elo elo = new Elo();
+public class Smart extends Move{
+	final int id;
+	int generation;
 	double[] values_stones;
 	double[] values_style;
 	DoublePoint prefBoardMiddle;
 	boolean calculating;
 	Board brd;
 
-	/**
-	 *
-	 * @param values_stones 5 numbers
-     */
-	public Smart(double[] values_stones, double[] values_style, DoublePoint prefBoardMiddle) {
+	int posibleMoves[][] = new int[8][8];
+	int white, black;
+	int amount;
+	int whiteMax, whiteMaxAmount;
+	int maxGood = 0;
+	int max;
+
+	public Smart(int id, final float MAX_VALUES_DELTA) {
+		this.id = id;
+		double[] values_stones = new double[5];
+		for (int i = 0; i < values_stones.length; i++) {
+			values_stones[i] = (i + 1) + (Math.random() * (i + 1) * 2) / (MAX_VALUES_DELTA * 2);
+		}
+		double[] values_style = new double[3];
+		for (int i = 0; i < values_style.length; i++) {
+			values_style[i] = (Math.random() * 2) + 1;
+		}
+		DoublePoint prefBoardMiddle = new DoublePoint(Math.random() * 8, Math.random() * 8);
+
+		System.out.println("Stats of Computer Nr. " + id);
+		for (int i = 0; i < getRandomStats().length; i++) {
+			System.out.println(Arrays.toString((double[]) getRandomStats()[i]));
+		}
+		((DoublePoint) getRandomStats()[2]).print();
+		System.out.println();
+
 		this.values_stones = values_stones;
 		this.values_style = values_style;
 		this.prefBoardMiddle = prefBoardMiddle;
 		if(values_stones.length != 5) System.out.print("not enought values");
+	}
+
+	public void mutate() {
+		generation++;
 	}
 
 	public Object[] getRandomStats(){
@@ -49,10 +69,10 @@ public class Smart {
 	public void checkForBestMove(){
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
-				if(brd.isEmpty(x1, y1)) continue; // || brd[x1][y1].charAt(1) == charC[0]) continue;
+//				if(brd.isEmpty(x1, y1)) continue; // || brd[x1][y1].charAt(1) == charC[0]) continue;
 				for(int x2 = 0; x2 < 8; x2++){
 					for(int y2 = 0; y2 < 8; y2++){
-						if(brd.isColorEqual(x1, y1,x2, y2)) continue;
+//						if(brd.isColorEqual(x1, y1,x2, y2)) continue;
 
 //						while(tCount.getCount() > 8){}
 //						if(!imWeg(x1, y1, x2, y2) && ableToMove(x1, y1, x2, y2)) {
@@ -85,7 +105,7 @@ public class Smart {
 				for(int x2 = 0; x2 < 8; x2++){
 					for(int y2 = 0; y2 < 8; y2++){
 						if(x1 == x2 && y1 == y2) continue;
-						if(brd.isColorEqual(x1, y1, x2, y2)) continue;
+//						if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 
 						if(!imWegSupport(x1, y1, x2, y2)){
 							if(canMoveCheck(brd, x1, y1, x2, y2)){
@@ -166,7 +186,7 @@ public class Smart {
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
 				for (int n = 0; n < 2; n++) {
-					for (Piece pc: brd.getPlayerStones()[n]) {
+					for (Piece pc: brd.getPlayerStones().get(n)) {
 						if(pc.getX() == x1 && pc.getY() == y1) {
 							if (n == 0) white += posibleMoves[x1][y1];
 							else black += posibleMoves[x1][y1];
@@ -217,7 +237,7 @@ public class Smart {
 			for(int y1 = 0; y1 < 8; y1++){
 				if(x1 == x2 && y1 == y2) continue;
 //				if(brd.getField(x1, y1).isEmpty()) continue;
-				if(!brd.isColorEqual(x1, y1,  x2, y2)) continue;
+//				if(!brd.isColorEqual(x1, y1,  x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2))
 					sup++;
 			}
@@ -231,7 +251,7 @@ public class Smart {
 			for(int y1 = 0; y1 < 8; y1++){
 				if(x1 == x2 && y1 == y2) continue;
 //				if(brd.getField(x1, y1).isEmpty()) continue;
-				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
+//				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2)) {
 //					enemy += values_stones[brd.getField(x1, y1).getPiece().getValue()];
 
@@ -260,7 +280,7 @@ public class Smart {
 			for(int y2 = 0; y2 < 8; y2++){
 				if(x1 == x2 && y1 == y2) continue;
 //				if(brd.getField( x2, y2).isEmpty()) continue;
-				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
+//				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2)) {
 //					enemyHit += values_stones[brd.getField(x1, y1).getPiece().getValue()];
 

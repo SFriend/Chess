@@ -1,4 +1,6 @@
-package com;
+package print;
+
+import com.Game;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,14 +17,14 @@ public class CountDown {
 			@Override
 			public void run() {
 				if (game.isRunning()) {
-					if (Main.timeP2.finish() || Main.timeP2.finish()) {
-						game.finish();
-					} else {
-//						if (game.)
-//							Main.timeP2.decrement();
-//						else
-//							Main.timeP1.decrement();
-					}
+//					if (Main.timeP2.finish() || Main.timeP2.finish()) {
+//						game.finish();
+//					} else {
+////						if (game.)
+////							Main.timeP2.decrement();
+////						else
+////							Main.timeP1.decrement();
+//					}
 				}
 			}
 		};

@@ -1,6 +1,7 @@
-package com;
+package print;
 
-import print.*;
+import com.Game;
+import com.Player;
 
 import java.awt.*;
 
@@ -22,7 +23,6 @@ public class Main extends JPanel implements Runnable {
     static boolean uhrSek = false;
 
     //	static String board[][] = new String[8][8]; // TODO multiverson
-    static Board brd = new Board(8);
 
     static print.Button[][] btnsTime = new print.Button[2][4];
     static print.Button btnClock;
@@ -41,7 +41,7 @@ public class Main extends JPanel implements Runnable {
     static Image buffer;
 
     ChessPrint menu;
-    public static Game game = new Game();
+    public static Game game = new Game(new Player(), new Player());
 
     public static Graphics2D gBuffer;
     @Override
@@ -165,7 +165,7 @@ public class Main extends JPanel implements Runnable {
         }
 
         public void timerAd(double n) {
-            Timer.limit += n;
+//            Timer.limit += n;
         }
 
         public void mousePressed(MouseEvent evt) {
@@ -302,7 +302,7 @@ public class Main extends JPanel implements Runnable {
             switch (key) {
                 case KeyEvent.VK_DOWN: width -= 5; return;
                 case KeyEvent.VK_UP: width += 5; return;
-                case KeyEvent.VK_RIGHT: Timer.limit -= 10; return;
+//                case KeyEvent.VK_RIGHT: Timer.limit -= 10; return;
                 case KeyEvent.VK_ESCAPE: vorbereiten(); return;
                 case KeyEvent.VK_G: printLog(); return;
                 case KeyEvent.VK_H: nullLog(); return;

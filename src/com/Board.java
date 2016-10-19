@@ -10,72 +10,154 @@ import java.util.concurrent.SynchronousQueue;
 /**
  * Created by pdk on 12.10.16.
  */
-public class Board {
-    final int width;
+public class Board extends Move {
     int move_count = 0;
     boolean whiteTurn = true;
-
     DoublePoint[] balance;
+    ArrayList<Piece> player1 = new ArrayList<>();
+    ArrayList<Piece> player2 = new ArrayList<>();
+    ArrayList<ArrayList<Piece>> playerStones = new ArrayList<>();
 
-    ArrayList<Piece> player1 = new ArrayList<Piece>();
-    ArrayList<Piece> player2 = new ArrayList<Piece>();
-    ArrayList<Piece>[] playerStones = (ArrayList<Piece>[]) new ArrayList[2];
-
-    Move move = new Move();
-
-    public Board(int width) {
-        playerStones[0] = player1;
-        playerStones[1] = player2;
-        this.width = width;
-        for (int i = 0; i < width; i++) {
-            player1.add(new Pawn(i,1,true));
-            player2.add(new Pawn(i,6,false));
+    public Board() {
+        playerStones.add(player1);
+        playerStones.add(player2);
+        for (int n = 0; n < 2; n++) {
+            int v = 0;
+            boolean w = ((n==0) ? true:false);
+            for (int i = 0; i < 8; i++) {
+                playerStones.get(n).add(new Pawn(i, 1 + (n * 5), v, w));
+            }
+            int y = n*7;
+            playerStones.get(n).add(new Rook    (0,y,v,w));
+            playerStones.get(n).add(new Knight  (1,y,v,w));
+            playerStones.get(n).add(new Bishop  (2,y,v,w));
+            playerStones.get(n).add(new Queen   (3,y,v,w));
+            playerStones.get(n).add(new King    (4,y,v,w));
+            playerStones.get(n).add(new Bishop  (5,y,v,w));
+            playerStones.get(n).add(new Knight  (6,y,v,w));
+            playerStones.get(n).add(new Rook    (7,y,v,w));
         }
-
-        player1.add(new Rook    (0,0,true));
-        player1.add(new Knight  (1,0,true));
-        player1.add(new Bishop  (2,0,true));
-        player1.add(new Queen   (3,0,true));
-        player1.add(new King    (4,0,true));
-        player1.add(new Bishop  (5,0,true));
-        player1.add(new Knight  (6,0,true));
-        player1.add(new Rook    (7,0,true));
-
-        player2.add(new Rook    (0,7,false));
-        player2.add(new Knight  (1,7,false));
-        player2.add(new Bishop  (2,7,false));
-        player2.add(new Queen   (3,7,false));
-        player2.add(new King    (4,7,false));
-        player2.add(new Bishop  (5,7,false));
-        player2.add(new Knight  (6,7,false));
-        player2.add(new Rook    (7,7,false));
         calcBalance();
     }
 
-    public boolean randomMove(){
-        return move.Random(this);
+    public Board cloneBoard() {
+        Board clone = new Board();
+
+        clone.setMove_count(move_count);
+        clone.setWhiteTurn(whiteTurn);
+        clone.setBalance(balance);
+
+        clone.player1.clear();
+        clone.player2.clear();
+        clone.playerStones.clear();
+        for (int i = 0; i < player1.size(); i++) clone.player1.add(player1.get(i).clonePiece());
+        for (int i = 0; i < player2.size(); i++) clone.player2.add(player2.get(i).clonePiece());
+        clone.playerStones.add(clone.player1);
+        clone.playerStones.add(clone.player2);
+        return clone;
     }
 
-    public void movePiece(int x1, int y1, int x2, int y2){
-        for (Piece pc1 : playerStones[getPlayer()]) {
-            if(pc1.getX() == x1 && pc1.getY() == y1) {
-                pc1.setX(x2);
-                pc1.setY(y2);
-                for (Piece pc2 : playerStones[1-getPlayer()]){
-                    if (pc2.getX() == x2 && pc2.getY() == y2) {
-                        playerStones[1-getPlayer()].remove(pc2);
-                        break;
+    public void movePiece(int x1, int y1, int x2, int y2) {
+        getPiece(x1,y1).setXY(x2,y2);
+
+        if (!isEmpty(x2,y2)) {
+//            if (pc2.getID() == 5) System.out.println("WTF YOU DOING");
+            playerStones.get(1-getPlayer()).remove(getPiece(x2,y2));
+        }
+    }
+
+    public boolean isCheck() {
+        for (Piece pc2 : getPlayerStones().get(getPlayer())) {
+            if (pc2.getID() == 5) { // Kings
+                for (Piece pc1 : getPlayerStones().get(1-getPlayer())) {
+                    if(new Logic(this, pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY()).ableToMove()) {
+                        System.out.println("check");
+                        System.out.printf("%d %d %d %d\n", pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY());
+                        return true;
                     }
                 }
                 break;
             }
         }
-        calcBalance();
+        System.out.println("all right");
+        return false;
     }
 
-    public boolean isColorEqual(int x1, int y1, int x2, int y2){
-        if (!isEmpty(x1, y1) && !isEmpty(x2,y2)) {
-            return getPiece(x1, y1).isWhite() && getPiece(x2,y2).isWhite();
+    private void calcBalance() {
+        double gap = 0.5;
+        DoublePoint pointSum[] = {new DoublePoint(0, 0), new DoublePoint(0, 0)};
+        for (int n = 0; n < 2; n++) {
+            for (Piece pc : playerStones.get(n)) {
+                pointSum[n].addPoint(pc.getX() + gap, pc.getY() + gap);
+            }
+            pointSum[n].divide(playerStones.get(0).size());
+        }
+        balance = pointSum;
+    }
+
+    public void print() {
+        System.out.println("################# " + getMove_count());
+        for (int y = 7; y >= 0; y--) {
+            System.out.print(y+1 + " ");
+            skip: for (int x = 0; x < 8; x++) {
+                for (int n = 0; n < 2; n++) {
+                    for (Piece pc : playerStones.get(n)) {
+                        if(pc.getX() == x && pc.getY() == y) {
+                            System.out.print(pc.getName().charAt(0) + "" + n + " ");
+                            continue skip;
+                        }
+                    }
+                } System.out.print("   ");
+            } System.out.println("|");
+        }
+        String notation = "abcdefgh";
+        System.out.print("  ");
+        for (int i = 0; i < 8; i++) {
+            System.out.print(notation.charAt(i) + "  ");
+        } System.out.println();
+//        balance[0].print();
+//        balance[1].print();
+        System.out.println("Stones: " + (playerStones.get(0).size() + playerStones.get(1).size()));
+
+    }
+
+    public void incrementMoveCount() {
+        move_count++;
+        whiteTurn = !whiteTurn;
+    }
+
+    public int getPieceNumber(){
+        return player1.size()+player2.size();
+    }
+
+    public int getPlayer(){
+        return isWhiteTurn() ? 0 : 1;
+    }
+
+    public int getMove_count() {
+        return move_count;
+    }
+
+    public boolean getWhiteTurn(){
+        return whiteTurn;
+    }
+
+    private boolean isWhiteTurn(){
+        return whiteTurn;
+    }
+
+    public boolean isEmpty(int x, int y) {
+        for (int n = 0; n < 2; n++) {
+            for (Piece piece : playerStones.get(n)) {
+                if (piece.getX() == x && piece.getY() == y) return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isColorEqual(int x1, int y1, int x2, int y2) {
+        if (!isEmpty(x2,y2)) {
+            return getPiece(x1, y1).isWhite() == getPiece(x2,y2).isWhite();
         }
 //        for (Piece pc1 : playerStones[getPlayer()]) {
 //            if(pc1.getX() == x1 && pc1.getY() == y1) {
@@ -90,26 +172,9 @@ public class Board {
         return false;
     }
 
-    public void calcBalance() {
-        double gap = 0.5;
-        DoublePoint pointSum[] = {new DoublePoint(0, 0), new DoublePoint(0, 0)};
-        for (int n = 0; n < 2; n++) {
-            for (Piece pc : playerStones[n]) {
-                pointSum[n].addPoint(pc.getX() + gap, pc.getY() + gap);
-            }
-            pointSum[n].divide(playerStones[n].size());
-        }
-        balance = pointSum;
-    }
-
-    public void incrementMoveCount(){
-        move_count++;
-        whiteTurn = !whiteTurn;
-    }
-
     public Piece getPiece(int x1, int y1) {
         for (int n = 0; n  < 2; n++) {
-            for (Piece pc: playerStones[n]) {
+            for (Piece pc: playerStones.get(n)) {
                 if (pc.getX() == x1 && pc.getY() == y1)
                     return pc;
             }
@@ -117,109 +182,43 @@ public class Board {
         return null;
     }
 
-    public boolean isWhiteTurn(){
-        return whiteTurn;
+    private ArrayList<Piece> getPlayer1(){
+        return player1;
     }
 
-    public boolean isEmpty(int x, int y){
-        for (int n = 0; n < 2; n++) {
-            for (Piece piece : playerStones[n]) {
-                if (piece.getX() == x && piece.getY() == y) return false;
-            }
-        }
-        return true;
+    private ArrayList<Piece> getPlayer2(){
+        return player2;
     }
 
-    public void print(){
-        for (int y = width-1; y >= 0; y--) {
-            skip: for (int x = 0; x < width; x++) {
-                for (int n = 0; n < 2; n++) {
-                    for (Piece pc : playerStones[n]) {
-                        if(pc.getX() == x && pc.getY() == y) {
-                            System.out.print(pc.getName().charAt(0) + "" + n + " ");
-                            continue skip;
-                        }
-                    }
-                } System.out.print("   ");
-            } System.out.println(" | ");
-        }
-        balance[0].print();
-        balance[1].print();
-        System.out.println("Stones: " + (playerStones[0].size() + playerStones[1].size()));
-        System.out.println("################# " + getMove_count());
-
-    }
-
-    public Board clone(Board brd) {
-        Board temp_brd = new Board(brd.width);
-        temp_brd.move_count = brd.getMove_count();
-        temp_brd.whiteTurn = brd.getWhiteTurn();
-        temp_brd.balance = brd.getBalance();
-        temp_brd.playerStones = brd.getPlayerStones();
-        temp_brd.move = brd.getMove();
-        return temp_brd;
-    }
-
-    public int getPieceNumber(){
-        return player1.size()+player2.size();
-    }
-
-    public ArrayList<Piece>[] getPlayerStones() {
+    public ArrayList<ArrayList<Piece>> getPlayerStones() {
         return playerStones;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getMove_count() {
-        return move_count;
-    }
-
-    public int getPlayer(){
-        return isWhiteTurn() ? 0 : 1;
-    }
-
-    public Move getMove() {
-        return move;
-    }
-
-    public boolean getWhiteTurn(){
-        return whiteTurn;
     }
 
     public DoublePoint[] getBalance() {
         return balance;
     }
-}
 
-class DoublePoint{
-    private double x, y;
-
-    public DoublePoint(double x, double y) {
-        this.x = x;
-        this.y = y;
+    public void setPlayerStones(ArrayList<ArrayList<Piece>> playerStone) {
+        this.playerStones = playerStone;
     }
 
-    public void divide(double n) {
-        this.x /= n;
-        this.y /= n;
+    public void setPlayer1(ArrayList<Piece> player1) {
+        this.player1 = player1;
     }
 
-    public void addPoint(double x, double y) {
-        this.x += x;
-        this.y += y;
+    public void setPlayer2(ArrayList<Piece> player2) {
+        this.player2 = player2;
     }
 
-    public void print(){
-        System.out.println("["+x+", "+y+"]");
+    public void setMove_count(int move_count) {
+        this.move_count = move_count;
     }
 
-    public double getX() {
-        return x;
+    public void setWhiteTurn(boolean whiteTurn){
+        this.whiteTurn = whiteTurn;
     }
 
-    public double getY() {
-        return y;
+    public void setBalance(DoublePoint[] balance) {
+        this.balance = balance;
     }
 }

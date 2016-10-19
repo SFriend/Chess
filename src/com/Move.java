@@ -12,23 +12,27 @@ public class Move {
 	 * @param brd
      */
 	public boolean Normal (Board brd, int x1, int y1, int x2, int y2) {
-		if(x1 == x2 && y1 == y2) return false; // move to same field
-		if(new Logic(brd, x1, y1, x2, y2).ableToMove()) {
-			String temp = "";
-			for (Piece pc1: brd.playerStones[brd.getPlayer()]) { // piece p1
-				if (pc1.getX() == x1 && pc1.getY() == y1)
-					temp += pc1.getName().charAt(0);
+		if (brd.isEmpty(x1, y1)) return false; // empty field picked
+		if (brd.isColorEqual(x1, y1, x2, y2)) return false;
+		if (x1 == x2 && y1 == y2) return false; // move to same field
+		if (new Logic(brd, x1, y1, x2, y2).ableToMove()) {
+			if (brd.getPiece(x1, y1).getID() == 5) {
+				System.out.print("King move");
 			}
+			String temp = "";
+			temp += brd.getPiece(x1,y1).getName().charAt(0);
 			temp += noation.charAt(x1) + "" + (y1 + 1); // move 1
 			temp += brd.isEmpty(x2, y2) ? "- " : "x";
-			for (Piece pc2: brd.playerStones[1-brd.getPlayer()]) { // piece p1
-				if (pc2.getX() == x1 && pc2.getY() == y1)
+			for (Piece pc2: brd.getPlayerStones().get(1-brd.getPlayer())) { // piece p2
+				if (pc2.getX() == x2 && pc2.getY() == y2) {
 					temp += pc2.getName().charAt(0);
+				}
 			}
-			temp += noation.charAt(x2) + "" + (y1 + 1); // move 2
+			temp += noation.charAt(x2) + "" + (y2 + 1); // move 2
 			brd.movePiece(x1, y1, x2, y2); // moves
+			brd.incrementMoveCount();
+			if(brd.isCheck()) temp += "+";
 			brd.print();
-			if(new Logic(brd, x1, y1, x2, y2).isCheck(brd)) temp += "+";
 			System.out.println(temp);
 
 //			if(brd.getField(x2, y2).isPawn()){ // pawn to special piece
@@ -38,7 +42,6 @@ public class Move {
 ////					brd.getField(p2).setString(figuren.charAt(randomStone)+ "" + brd.getField(p2).getColor());
 //				}
 //			}
-			brd.incrementMoveCount();
 			return true;
 		}
 		return false;
@@ -52,7 +55,7 @@ public class Move {
 			for (int j1 = 0; j1 < 8; j1++) {
 				int x1 = (int) p[0][i1][j1].getX();
 				int y1 = (int) p[0][i1][j1].getY();
-				for (Piece pc1 : brd.playerStones[brd.getPlayer()]) {
+				for (Piece pc1 : brd.getPlayerStones().get(brd.getPlayer())) {
 					if (pc1.getX() == x1 && pc1.getY() == y1) {
 						for (int i2 = 0; i2 < 8; i2++) {
 							for (int j2 = 0; j2 < 8; j2++) {
@@ -60,7 +63,6 @@ public class Move {
 								int y2 = (int) p[1][i2][j2].getY();
 								if (Normal(brd, x1, y1, x2, y2)) {
 									calculating = false;
-									System.out.println("found " + x1 + " " + y1 + " " + x2 + " " + y2);
 									return true;
 								}
 							}
@@ -69,7 +71,7 @@ public class Move {
 				}
 			}
 		}
-		System.out.print("no move found");
+		System.out.print("checkmate");
 		calculating = false;
 		return false;
 	}

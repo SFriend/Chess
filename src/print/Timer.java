@@ -1,4 +1,4 @@
-package com;
+package print;
 
 public class Timer {
 	int time;

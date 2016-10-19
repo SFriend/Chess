@@ -10,16 +10,14 @@ public class Elo {
     double EA;
     final int k = 10;
 
-    public int elo(int RA, int RB, float o){
+    private int elo(int RA, int RB, float o){
         double a = 1 + (Math.pow(10, (RB - RA) / 400d));
         return (int) (k * (o - (1 / a)) + 0.5d);
     }
-    public void setElo(PvP player, float outcome){
-        int p1 = player.getP1();
-        int p2 = player.getP2();
 
-        player.setP1(elo(p1, p2,   outcome));
-        player.setP2(elo(p2, p1, 1-outcome));
+    public void changeElo(int p2, float outcome){
+        int p1 = this.elo;
+        this.elo = elo(p1, p2, outcome);
     }
 
     public int getElo() {

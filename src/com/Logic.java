@@ -1,12 +1,11 @@
 package com;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Logic {
 
 	private int x1, y1, x2, y2;
-	Board brd;
+	private Board brd;
 
 	public Logic(Board brd,  int x1, int y1, int x2, int y2){
 		this.brd = brd;
@@ -16,23 +15,16 @@ public class Logic {
 		this. y2 = y2;
 	}
 
-	public boolean inTheWay() {
-		for (Piece pc1 : brd.playerStones[brd.getPlayer()]) {
-			if(pc1.getX() == x1 && pc1.getY() == y1) {
-				if (pc1.getID() == 2) {
-//					System.out.println(pc1.getID() + " " + x2 + " " + y2);
-					return false;
-				}
-			}
-		}
+	private boolean inTheWay() {
+		if (brd.getPiece(x1, y1).getID() == 2) return false;
 		int vx = vec(x1, x2); // direction of movement x
 		int vy = vec(y1, y2); // direction of movement y
-		for (int i = 1; i < 8; i++) {
+		for (int d = 1; d < 8; d++) {
 			try {
-				if ((x1 + (vx * i)) == x2 && (y1 + (vy * i)) == y2) return false;
-				if (brd.isEmpty(x1 + (vx * i), y1 + (vy * i))) continue;
+				if ((x1 + (vx * d)) == x2 && (y1 + (vy * d)) == y2) return false;
+				if (brd.isEmpty(x1 + (vx * d), y1 + (vy * d))) continue;
 				else return true;
-			} catch (Exception e) { System.out.println("error in the way"); }
+			} catch (Exception e) { System.out.println("out of array"); }
 		}
 		return false;
 	}
@@ -49,29 +41,12 @@ public class Logic {
 		else return 0;
 	}
 	
-	/**
-	 * Checks if the move is viable
-     */
-	public boolean direction() {
-//		boolean f = false;
-//		for (Piece pc1 : brd.playerStones[brd.getPlayer()]) {
-//			if (pc1.getX() == x1 && pc1.getY() == y1) f = true;
-//		}
-//		if(!f) return false;
-		if (!brd.isEmpty(x1,y1)) {
-			if ((brd.getPiece(x1, y1).isWhite() ? 0 : 1) != brd.getPlayer()) return false;
-		}
-		if(inTheWay()) return false;
-//		if(brd.getPlayer() != (brd.getField(x1, y1).isPlayer1() ? 0:1)) return false; // checks if correct (color) piece is selected //TODO palyer
-//		if(brd[x1][y1].charAt(0) == figuren.charAt(5) && brd[x2][y2].charAt(0) == figuren.charAt(1)); //Rochade
-		return moveViable();
-	}
-
 	public boolean moveViable() {
+		if (inTheWay()) return false;
+//		if(brd[x1][y1].charAt(0) == figuren.charAt(5) && brd[x2][y2].charAt(0) == figuren.charAt(1)); // TODO Rochade
 //		for (int n = 0; n < 2; n++) {
 //			for (Piece pc1 : brd.playerStones[n]) {
 //				if(pc1.getX() == x1 && pc1.getY() == y1) {
-					if (!brd.isEmpty(x1,y1)) {
 						switch (brd.getPiece(x1,y1).getID()){
 							case 0 : return pawnMove(); // pawn //TODO en passant
 							case 1 : return rookMove(); // rook
@@ -81,7 +56,6 @@ public class Logic {
 							case 5 : return kingMove(); // king
 							default : { System.out.println("wrong input piece " + brd.getPiece(x1,y1).getID()); } break;
 						}
-					}
 
 //					if (pc1 instanceof Pawn) return pawnMove(brd, x1, y1, x2, y2);
 //					else if (pc1 instanceof Rook) return rookMove(x1, y1, x2, y2);
@@ -97,19 +71,21 @@ public class Logic {
 //		return false;
 	}
 
-	public boolean pawnMove() {
-		int temp = 1 - (2*brd.getPlayer()); // black (1) or white (-1)
+	private boolean pawnMove() {
+		int direction = brd.getPiece(x1,y1).getDirection(); // white (-1) or white (1)
 		if (brd.isEmpty(x2,y2)){ // empty target field
 			if((x1 - x2) == 0) { // step forward
-				if((y2 - y1) * temp == 1) // one step
+				if((y2 - y1) == direction) { // one step
 					return true;
-				else if((y2 - y1) * temp == 2) // two steps
-					if((y1 == 3.5 + (temp * -2.5))) // in beginning position white (6) black (1)
+				} else if((y2 - y1) == 2 * direction) { // two steps
+					if ((y1 == 3.5 + (direction * -2.5))) { // in beginning position white (6) black (1)
 						return true;
+					}
+				}
 			}
 		} else { // target field
-			if((Math.abs(x1 - x2) == 1)){ // bishopMove
-				if((y2 - y1) * temp == 1){ // forward
+			if((Math.abs(x1 - x2) == 1)) { // bishopMove
+				if((y2 - y1) == direction) { // forward
 					return true;
 				}
 			}
@@ -117,25 +93,25 @@ public class Logic {
 		return false;
 	}
 
-	public boolean rookMove(){
+	private boolean rookMove(){
 		return (x1 == x2) || (y1 == y2);
 	}
 
-	public boolean knightsMove() {
+	private boolean knightsMove() {
 		if(Math.abs(x1 - x2) == 1 && Math.abs(y1 - y2) == 2) return true;
 		else if((Math.abs(x1 - x2) == 2 && Math.abs(y1 - y2) == 1)) return true;
 		return false;
 	}
 
-	public boolean bishopMove() {
+	private boolean bishopMove() {
 		return Math.abs(x1 - x2) == Math.abs(y1 - y2);
 	}
 
-	public boolean queenMove() {
+	private boolean queenMove() {
 		return bishopMove() || (rookMove());
 	}
 
-	public boolean kingMove() {
+	private boolean kingMove() {
 //			if (moves[x1][y1] == 0 && moves[x2][y2] == 0 && brd.getField(p1).isPiece(1) && brd.isColorEqual(x1, y1, x2, y2)) { // Rochade
 //				if (x1 > x2) {
 //					if (isEmpty(brd[x1 - 1][y1]) && isEmpty(brd[x1 - 2][y1]) && isEmpty(brd[x1 - 3][y1])) {
@@ -149,69 +125,23 @@ public class Logic {
 //					}
 //				}
 //			} else
-			return (oneStepbishopMove() || oneSteprookMove());
-	}
-
-	public boolean oneSteprookMove() {
-		return (Math.abs(x1 - x2) == 1) || (Math.abs(y1 - y2) == 1);
-	}
-
-	public boolean oneStepbishopMove() {
-		return (Math.abs(x1 - x2) == 1) && (Math.abs(y1 - y2) == 1);
+		return (Math.abs(x1 - x2) <= 1) && (Math.abs(y1 - y2) <= 1);
 	}
 
 	public boolean ableToMove() {
-//		if(!brd.isWhiteTurn()) System.out.println("123123123123123123 "+ brd.isEmpty(x1, y1) + " " + x1 + " " + y1);
-		if (brd.isEmpty(x1, y1)) return false; // if empty field // correct
-		for (Piece pc1: brd.playerStones[brd.getPlayer()]) { // hit one pices?
-			if (pc1.getX() == x2 && pc1.getY() == y2) return false;
-		}
-		if (!direction()) return false; // move viable
+		if (!moveViable()) return false; // move viable
 
-		Board temp_brd = new Board(8);
-		temp_brd.clone(brd);
+		Board temp_brd = brd.cloneBoard();//new Board(8); //brd.getWidth(),brd.getMove_count(),brd.getWhiteTurn(),brd.getBalance(), brd.getPlayerStones());
 
-//		temp_brd.field = brd.getField();
-//		temp_brd.move_count = brd.getMove_count();
-//		temp_brd.whiteTurn = brd.getWhiteTurn();
-//		temp_brd.balance = brd.getBalance();
-//		temp_brd.playerStones = brd.getPlayerStones();
-//		temp_brd.move = brd.getMove();
-        temp_brd.movePiece(x1, y1, x2, y2);
-//        System.out.println("----------------------------------------------");
+		temp_brd.movePiece(x1, y1, x2, y2);
+//        System.out.println("------------------- " + temp_brd);
 //        temp_brd.print();
-//        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++");
+//        System.out.println("+++++++++++++++++++ " + brd);
 //        brd.print();
-		return !isCheck(temp_brd);
-	}
-
-	/**
-	 * return true if 0 (black) or 1 (white) is in check
-	 * @return true -> check
-	 */
-	public boolean isCheck(Board brd) {
-        for (Piece pc2 : brd.playerStones[brd.getPlayer()]) {
-            if (pc2.getID() == 5) { // King
-                for (Piece pc1 : brd.playerStones[1-brd.getPlayer()]) {
-					setXY(pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY());
-                    if (!inTheWay()) {
-                        if(direction())
-                            return true;
-                    }
-                }
-            }
-        }
-        return false;
+		return temp_brd.isCheck(); // !isCheck(temp_brd);
 	}
 
 	public boolean stalemate() {
-		return (brd.playerStones[0].size() + brd.playerStones[1].size()) <= 2;
-	}
-
-	public void setXY(int x1, int y1, int x2, int y2){
-		this. x1 = x1;
-		this. y1 = y1;
-		this. x2 = x2;
-		this. y2 = y2;
+		return (brd.getPlayerStones().get(0).size() + brd.getPlayerStones().get(1).size()) <= 2;
 	}
 }

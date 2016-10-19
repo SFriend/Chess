@@ -1,7 +1,6 @@
 package print;
 
 import com.Board;
-import com.Main;
 import com.Piece;
 
 import java.awt.*;
@@ -30,7 +29,7 @@ public class ChessStones {
 
 				int x2 = x1 * width;
 				int y2 = y1 * width;
-				for (Piece pc: brd.getPlayerStones()[brd.getPlayer()]) {
+				for (Piece pc: brd.getPlayerStones().get(brd.getPlayer())) {
 					if(pc.getX() == x1 && pc.getY() == y1) {
 						switch(pc.getID()){
 							case 0 : pawn(x2, y2); break;

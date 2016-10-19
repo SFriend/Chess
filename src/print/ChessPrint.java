@@ -1,9 +1,5 @@
 package print;
 
-import com.Board;
-import com.Main;
-import com.Timer;
-
 import java.awt.*;
 
 public class ChessPrint extends Main {
@@ -11,7 +7,7 @@ public class ChessPrint extends Main {
 	boolean computer;
 	boolean computerVScomputer;
 
-	Board brd = new Board(8);
+//	Board brd = new Board(8);
 
 	static boolean easterEgg[] = new boolean[10];
 	static boolean uhrSek = false;
@@ -31,21 +27,21 @@ public class ChessPrint extends Main {
 			selecColor++;
 		}
 		gBuffer.setColor(color.getColor(selecColor % color.getLength()));
-		if (game.isSelected()) { // prints selection
-			Field(x1, y1);
-		}
-		if(game.isChosen()){ // prints chose
-			Field(x2, y2);
-		}
-		new ChessStones(brd);
+//		if (game.isSelected()) { // prints selection
+//			Field(x1, y1);
+//		}
+//		if(game.isChosen()){ // prints chose
+//			Field(x2, y2);
+//		}
+//		new ChessStones(brd);
 //		if(choseStone) new ChessStones().ChoseStone(choseStoneX, choseStoneY);
 		Settings();
 		Uhren();
 
 
-		if (game.isSelected() && game.isChosen() && game.isRunning()) {
-//			new Move(brd, game.m.p1, m.p2);
-		}
+//		if (game.isSelected() && game.isChosen() && game.isRunning()) {
+////			new Move(brd, game.m.p1, m.p2);
+//		}
 	}
 
 	public int scale(int n){
@@ -72,9 +68,9 @@ public class ChessPrint extends Main {
 			TextBox(scale(1140), (int)(-40*width/100), (int)(220*width/100), scale(60), Color.orange);
 			gBuffer.setColor(Color.black);
 			gBuffer.setFont(new Font("Arial", Font.BOLD, scale(40)));
-			if(game.isPaused())
-				gBuffer.drawString("Weiter", scale(1190) + abstX, scale(5) + abstY);
-			else gBuffer.drawString("Start", scale(1200) + abstX, scale(5) + abstY);
+//			if(game.isPaused())
+//				gBuffer.drawString("Weiter", scale(1190) + abstX, scale(5) + abstY);
+//			else gBuffer.drawString("Start", scale(1200) + abstX, scale(5) + abstY);
 		}
 		gBuffer.setColor(Color.black);
 		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(36)));
@@ -375,7 +371,7 @@ public class ChessPrint extends Main {
 		if(game.isRunning()){
 			gBuffer.setColor(Color.black);
 			gBuffer.setFont(new Font("Arial", Font.PLAIN, 65*width/100));
-			gBuffer.drawString(game.getLastMove(), (int)(800*width/100) + abstX+width, (int)(870*width/100) + abstY);
+			gBuffer.drawString("ad" /**game.getLastMove()*/, (int)(800*width/100) + abstX+width, (int)(870*width/100) + abstY);
 		}
 	}
 

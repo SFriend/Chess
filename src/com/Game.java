@@ -10,37 +10,35 @@ import java.util.Random;
 public class Game {
     private boolean running = true;
     private boolean finish = false;
-    private boolean paused = false;
+    public Board brd;
 
-    private boolean computer = false;
-
-    private boolean player1 = true;
-    private boolean selected = false;
-
-    private String lastMove;
-
-    private boolean computerVScomputer = computer;
-    private boolean chosen = false;
-
-    public static Board brd = new Board(8);
-
-    public Game() {
-
+    public Game(Player player1, Player player2) {
+        brd = new Board();
 //        brd.print();
 //        brd.move(0,1,0,3);
 //        brd.randomMove();
 //        brd.randomMove();
         while (isRunning()) {
-            if(!brd.randomMove() && brd.getPieceNumber() > 2) finish();
+            if(!brd.Random(brd) && brd.getPieceNumber() > 2) finish();
+//            if (!player1.getBrain().Random(brd)) {
+//                int elo_p1 = player1.getElo();
+//                int elo_p2 = player2.getElo();
+//                player1.setElo(elo_p2, 1);
+//                player2.setElo(elo_p1, 0);
+//                break;
+//            }
+//            if (!player2.getBrain().Random(brd)) {
+//                int elo_p1 = player1.getElo();
+//                int elo_p2 = player2.getElo();
+//                player1.setElo(elo_p2, 0);
+//                player2.setElo(elo_p1, 1);
+//                break;
+//            }
         }
+
         for (int i = 0; i < 2; i++) {
         }
 //        EventQueue.invokeLater(new Main());
-    }
-
-    public void reset(){
-        finish = true;
-        paused = false;
     }
 
     double randomGenerator(long seed) {
@@ -53,35 +51,11 @@ public class Game {
         running = true;
     }
 
-    public void pause(){
-        paused = true;
-    }
-
-    public void conti(){
-        paused = false;
-    }
-
     public void finish() {
         running = false;
     }
 
-    public boolean isSelected(){
-        return selected;
-    }
-
-    public boolean isChosen() {
-        return chosen;
-    }
-
     public boolean isRunning() {
         return running;
-    }
-
-    public boolean isPaused() {
-        return paused;
-    }
-
-    public String getLastMove() {
-        return lastMove;
     }
 }
