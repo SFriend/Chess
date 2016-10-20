@@ -19,21 +19,21 @@ public class Game {
 //        brd.randomMove();
 //        brd.randomMove();
         while (isRunning()) {
-            if(!brd.Random(brd) && brd.getPieceNumber() > 2) finish();
-//            if (!player1.getBrain().Random(brd)) {
-//                int elo_p1 = player1.getElo();
-//                int elo_p2 = player2.getElo();
-//                player1.setElo(elo_p2, 1);
-//                player2.setElo(elo_p1, 0);
-//                break;
-//            }
-//            if (!player2.getBrain().Random(brd)) {
-//                int elo_p1 = player1.getElo();
-//                int elo_p2 = player2.getElo();
-//                player1.setElo(elo_p2, 0);
-//                player2.setElo(elo_p1, 1);
-//                break;
-//            }
+//            if(!brd.Random(brd) && brd.getPieceNumber() > 2) finish();
+            if (!player1.getBrain().SmartMove(brd)) {
+                int elo_p1 = player1.getElo();
+                int elo_p2 = player2.getElo();
+                player1.setElo(elo_p2, 1);
+                player2.setElo(elo_p1, 0);
+                break;
+            }
+            if (!player2.getBrain().Random(brd)) {
+                int elo_p1 = player1.getElo();
+                int elo_p2 = player2.getElo();
+                player1.setElo(elo_p2, 0);
+                player2.setElo(elo_p1, 1);
+                break;
+            }
         }
 
         for (int i = 0; i < 2; i++) {

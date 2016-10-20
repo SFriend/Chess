@@ -12,8 +12,8 @@ public class Player {
     private int lose;
     private Smart brain;
 
-    public Player() {
-
+    public Player(int id, final float MAX_VALUES_DELTA) {
+        brain = new Smart(id, MAX_VALUES_DELTA);
     }
 
     public Smart getBrain() {

@@ -1,7 +1,5 @@
 package com;
 
-import java.util.ArrayList;
-
 public class Logic {
 
 	private int x1, y1, x2, y2;
@@ -15,7 +13,7 @@ public class Logic {
 		this. y2 = y2;
 	}
 
-	private boolean inTheWay() {
+	public boolean inTheWay() {
 		if (brd.getPiece(x1, y1).getID() == 2) return false;
 		int vx = vec(x1, x2); // direction of movement x
 		int vy = vec(y1, y2); // direction of movement y
@@ -41,7 +39,7 @@ public class Logic {
 		else return 0;
 	}
 	
-	public boolean moveViable() {
+	public boolean correctMove() {
 		if (inTheWay()) return false;
 //		if(brd[x1][y1].charAt(0) == figuren.charAt(5) && brd[x2][y2].charAt(0) == figuren.charAt(1)); // TODO Rochade
 //		for (int n = 0; n < 2; n++) {
@@ -54,7 +52,7 @@ public class Logic {
 							case 3 : return bishopMove(); // bishop
 							case 4 : return queenMove(); // queen
 							case 5 : return kingMove(); // king
-							default : { System.out.println("wrong input piece " + brd.getPiece(x1,y1).getID()); } break;
+							default : { System.out.println("wronbg input piece " + brd.getPiece(x1,y1).getID()); } break;
 						}
 
 //					if (pc1 instanceof Pawn) return pawnMove(brd, x1, y1, x2, y2);
@@ -129,16 +127,33 @@ public class Logic {
 	}
 
 	public boolean ableToMove() {
-		if (!moveViable()) return false; // move viable
-
-		Board temp_brd = brd.cloneBoard();//new Board(8); //brd.getWidth(),brd.getMove_count(),brd.getWhiteTurn(),brd.getBalance(), brd.getPlayerStones());
-
+		if (!correctMove()) return false; // move viable
+		Board temp_brd = brd.cloneBoard();
 		temp_brd.movePiece(x1, y1, x2, y2);
-//        System.out.println("------------------- " + temp_brd);
-//        temp_brd.print();
-//        System.out.println("+++++++++++++++++++ " + brd);
-//        brd.print();
-		return temp_brd.isCheck(); // !isCheck(temp_brd);
+
+//		temp_brd.incrementMoveCount();
+//		System.out.println("------------------- " + temp_brd);
+//		temp_brd.print();
+//		System.out.println("+++++++++++++++++++ " + brd);
+//		brd.print();
+		return !isCheck(temp_brd);
+	}
+
+	public boolean isCheck(Board brd) {
+		for (Piece pc2 : brd.getPlayerStones().get(brd.getPlayer())) {
+			if (pc2.getID() == 5) { // Kings
+				for (Piece pc1 : brd.getPlayerStones().get(1-brd.getPlayer())) {
+					if(new Logic(brd, pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY()).correctMove()) {
+//						System.out.println("check");
+//						System.out.printf("%d %d %d %d\n", pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY());
+						return true;
+					}
+				}
+				break;
+			}
+		}
+		System.out.println("all right");
+		return false;
 	}
 
 	public boolean stalemate() {

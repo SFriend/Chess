@@ -23,9 +23,11 @@ public class Evolution {
 //        }
 
         for (int i = 0; i < number_of_computer; i++) {
-            players.add(new Player());
+            players.add(new Player(i,MAX_VALUES_DELTA));
         }
-        Game game = new Game(players.get(0), players.get(1));
+        for (int i = 0; i < number_of_computer; i+=2) {
+            Game game = new Game(players.get(i), players.get(i+1));
+        }
 
         purge(50);
 //        System.out.println(smart.get(0).pointDelta(new Point(1, 1), new Point(2, 1)));

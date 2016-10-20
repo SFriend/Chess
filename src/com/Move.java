@@ -31,13 +31,14 @@ public class Move {
 			temp += noation.charAt(x2) + "" + (y2 + 1); // move 2
 			brd.movePiece(x1, y1, x2, y2); // moves
 			brd.incrementMoveCount();
-			if(brd.isCheck()) temp += "+";
+//			if(isCheck(brd)) temp += "+";
 			brd.print();
 			System.out.println(temp);
 
 //			if(brd.getField(x2, y2).isPawn()){ // pawn to special piece
 //				if(y2 == 0 || y2 == 7){
 //					int randomStone = (int)(Math.random() * (5 - 1) + 1);
+//
 ////					brd.setField(x2, y2, new Field(x2, y2).addPiece(null)));
 ////					brd.getField(p2).setString(figuren.charAt(randomStone)+ "" + brd.getField(p2).getColor());
 //				}
@@ -112,34 +113,5 @@ public class Move {
 	}
 
 	public void moveRe() { // TODO undo move
-//		int x1 = Stones.ROW_K.indexOf(log[player - 2].charAt(1));
-//		int y1 = Integer.parseInt("" + log[player - 2].charAt(2));
-//		int x2 = Stones.ROW_K.indexOf(log[player - 2].charAt(5));
-//		int y2 = Integer.parseInt("" + log[player - 2].charAt(6));
-//
-//		char farbe = ' ';
-////		if (player == 0)
-////			farbe = charC[0];
-////		else
-////			farbe = charC[1];
-////		brd.setField(new Point(x1,y1), new Field(log[player - 2].charAt(0) + "" + farbe));
-////		if (getPlayer() == 0)
-////			farbe = charC[1];
-////		else
-////			farbe = charC[0];
-//		brd.setField(new Point(x2,y2), new Field(log[player - 2].charAt(4) + "" + farbe));
-//		if (log[player - 2].charAt(4) == ' ')
-//			brd.setField(new Point(x2,y2), new Field(null));
-//		player--;
-
-//		 String boardTemp1 = board[x1][y1];
-//		 String boardTemp2 = board[x2][y2];
-//
-//		 board[x2][y2] = board[x1][y1];
-//		 //if(log[recreateGame].charAt(index))
-//		 board[x1][y1] = " ";
-//
-//		 moves[x2][y2] = moves[x1][y1] + 1;
-//		 moves[x1][y1] = 0;
 	}
 }

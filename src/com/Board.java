@@ -59,28 +59,9 @@ public class Board extends Move {
 
     public void movePiece(int x1, int y1, int x2, int y2) {
         getPiece(x1,y1).setXY(x2,y2);
-
         if (!isEmpty(x2,y2)) {
-//            if (pc2.getID() == 5) System.out.println("WTF YOU DOING");
             playerStones.get(1-getPlayer()).remove(getPiece(x2,y2));
         }
-    }
-
-    public boolean isCheck() {
-        for (Piece pc2 : getPlayerStones().get(getPlayer())) {
-            if (pc2.getID() == 5) { // Kings
-                for (Piece pc1 : getPlayerStones().get(1-getPlayer())) {
-                    if(new Logic(this, pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY()).ableToMove()) {
-                        System.out.println("check");
-                        System.out.printf("%d %d %d %d\n", pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY());
-                        return true;
-                    }
-                }
-                break;
-            }
-        }
-        System.out.println("all right");
-        return false;
     }
 
     private void calcBalance() {
@@ -138,10 +119,6 @@ public class Board extends Move {
         return move_count;
     }
 
-    public boolean getWhiteTurn(){
-        return whiteTurn;
-    }
-
     private boolean isWhiteTurn(){
         return whiteTurn;
     }
@@ -156,19 +133,7 @@ public class Board extends Move {
     }
 
     public boolean isColorEqual(int x1, int y1, int x2, int y2) {
-        if (!isEmpty(x2,y2)) {
-            return getPiece(x1, y1).isWhite() == getPiece(x2,y2).isWhite();
-        }
-//        for (Piece pc1 : playerStones[getPlayer()]) {
-//            if(pc1.getX() == x1 && pc1.getY() == y1) {
-//                for (Piece pc2 : playerStones[getPlayer()]){
-//                    if (pc2.getX() == x2 && pc2.getY() == y2) {
-//                        return true;
-//                    }
-//                }
-//                break;
-//            }
-//        }
+        if (!isEmpty(x2,y2)) return getPiece(x1, y1).isWhite() == getPiece(x2,y2).isWhite();
         return false;
     }
 

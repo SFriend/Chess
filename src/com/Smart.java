@@ -1,7 +1,5 @@
 package com;
 
-import com.elo.Elo;
-
 import java.awt.*;
 import java.util.Arrays;
 
@@ -66,12 +64,23 @@ public class Smart extends Move{
 		return Math.sqrt( Math.pow(p2.getX()-p1.getX(), 2) + Math.pow(p2.getY()-p1.getY(), 2));
 	}
 
-	public void checkForBestMove(){
-		for(int x1 = 0; x1 < 8; x1++){
-			for(int y1 = 0; y1 < 8; y1++){
+	public boolean SmartMove(Board brd) {
+		for (Piece pc1: brd.playerStones.get(brd.getPlayer())) {
+			for(int x2 = 0; x2 < 8; x2++) {
+				for (int y2 = 0; y2 < 8; y2++) {
+
+				}
+			}
+		}
+		return false;
+	}
+
+	public void checkForBestMove() {
+		for(int x1 = 0; x1 < 8; x1++) {
+			for(int y1 = 0; y1 < 8; y1++) {
 //				if(brd.isEmpty(x1, y1)) continue; // || brd[x1][y1].charAt(1) == charC[0]) continue;
-				for(int x2 = 0; x2 < 8; x2++){
-					for(int y2 = 0; y2 < 8; y2++){
+				for(int x2 = 0; x2 < 8; x2++) {
+					for(int y2 = 0; y2 < 8; y2++) {
 //						if(brd.isColorEqual(x1, y1,x2, y2)) continue;
 
 //						while(tCount.getCount() > 8){}
@@ -80,7 +89,7 @@ public class Smart extends Move{
 //							return;
 //						}
 
-						if(!imWegSupport(x1, y1, x2, y2)){
+						if(!new Logic(brd, x1,y1,x2,y2).inTheWay()) {
 							canMoveCheck(brd, x1, y1, x2 , y2);
 						}
 					}
@@ -96,7 +105,7 @@ public class Smart extends Move{
 		int randCount = 1;
 
 		Move move = new Move();
-		
+
 		final Count tCount = new Count();
 		final Count count = new Count();
 		for(int x1 = 0; x1 < 8; x1++){
@@ -107,7 +116,7 @@ public class Smart extends Move{
 						if(x1 == x2 && y1 == y2) continue;
 //						if(brd.isColorEqual(x1, y1, x2, y2)) continue;
 
-						if(!imWegSupport(x1, y1, x2, y2)){
+						if(!new Logic(brd, x1,y1,x2,y2).inTheWay()){
 							if(canMoveCheck(brd, x1, y1, x2, y2)){
 								if(white == whiteMax){
 									if(randCount == random){
@@ -215,22 +224,6 @@ public class Smart extends Move{
 		searchForMax();
 	}
 	
-	boolean imWegSupport(int x1, int y1, int x2, int y2) {
-//		if(brd.getField(x1, y2).isKnight()) return false;
-		
-		int vx = new Logic(brd,x1,y1,x2,y2).vec(x1,x2);
-		int vy = new Logic(brd,x1,y1,x2,y2).vec(y1,y2);
-
-		for (int i = 1; i <= 7; i++) {
-			try {
-				if ((x1 + (vx*i)) == x2 && (y1 + (vy * i)) == y2) return false;
-//				if (brd.getField((x1 + (vx * i)), (y1 + (vy * i))).isEmpty()) continue;
-				else return true;
-			} catch (Exception e) { }
-		}
-		return false;
-	}
-	
 	public int support(int x2, int y2){
 		int sup = 0;
 		for(int x1 = 0; x1 < 8; x1++){
@@ -238,7 +231,7 @@ public class Smart extends Move{
 				if(x1 == x2 && y1 == y2) continue;
 //				if(brd.getField(x1, y1).isEmpty()) continue;
 //				if(!brd.isColorEqual(x1, y1,  x2, y2)) continue;
-				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2))
+				if(canMoveSupport(brd, x1, y1, x2, y2) && !new Logic(brd, x1,y1,x2,y2).inTheWay())
 					sup++;
 			}
 		}
@@ -249,48 +242,20 @@ public class Smart extends Move{
 		int enemy = 0;
 		for(int x1 = 0; x1 < 8; x1++){
 			for(int y1 = 0; y1 < 8; y1++){
-				if(x1 == x2 && y1 == y2) continue;
-//				if(brd.getField(x1, y1).isEmpty()) continue;
-//				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
-				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2)) {
-//					enemy += values_stones[brd.getField(x1, y1).getPiece().getValue()];
-
-//					char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
-//					if(ch == figuren.charAt(0)) enemy-=1;
-//					if(ch == figuren.charAt(1)) enemy-=2;
-//					if(ch == figuren.charAt(2)) enemy-=3;
-//					if(ch == figuren.charAt(3)) enemy-=4;
-//					if(ch == figuren.charAt(4)) enemy-=5;
-//					if(ch == figuren.charAt(5)) enemy-=6;
+				if(canMoveSupport(brd, x1, y1, x2, y2) && !new Logic(brd, x1,y1,x2,y2).inTheWay()) {
+					enemy -= values_stones[brd.getPiece(x1, y1).getID()];
 				}
 			}
 		}
 		return enemy;
 	}
 
-	/**
-	 * if can hit enemy += value of the stone
-	 * @param x1
-	 * @param y1
-     * @return
-     */
 	public double enemyHit(int x1, int y1){
 		double enemyHit = 0;
 		for(int x2 = 0; x2 < 8; x2++){
 			for(int y2 = 0; y2 < 8; y2++){
-				if(x1 == x2 && y1 == y2) continue;
-//				if(brd.getField( x2, y2).isEmpty()) continue;
-//				if(brd.isColorEqual(x1, y1, x2, y2)) continue;
-				if(canMoveSupport(brd, x1, y1, x2, y2) && !imWegSupport(x1, y1, x2, y2)) {
-//					enemyHit += values_stones[brd.getField(x1, y1).getPiece().getValue()];
-
-//					char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
-//					if(ch == figuren.charAt(0)) enemyHit+=6;
-//					if(ch == figuren.charAt(1)) enemyHit+=5;
-//					if(ch == figuren.charAt(2)) enemyHit+=4;
-//					if(ch == figuren.charAt(3)) enemyHit+=3;
-//					if(ch == figuren.charAt(4)) enemyHit+=2;
-//					if(ch == figuren.charAt(5)) enemyHit+=1;
+				if(canMoveSupport(brd, x1, y1, x2, y2) && !new Logic(brd, x1,y1,x2,y2).inTheWay()) {
+					enemyHit += values_stones[brd.getPiece(x1, y1).getID()];
 				}
 			}
 		}
@@ -308,18 +273,6 @@ public class Smart extends Move{
 			return true;
 		}
 		return false;
-	}
-	
-	public boolean canMoveCheck(Board brd, int x1, int y1, int x2, int y2){
-		if (!richtungSupport(brd, x1, y1, x2, y2)) return false;
-
-		return new Logic(brd,x1,y1,x2,y2).ableToMove();
-	}
-	
-	public boolean richtungSupport(Board brd, int x1, int y1, int x2, int y2){
-//		char ch = figuren.charAt(brd.getField(x1, y1).getPiece());
-
-		return new Logic(brd,x1,y1,x2,y2).moveViable();
 	}
 }
 
