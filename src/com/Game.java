@@ -14,29 +14,20 @@ public class Game {
 
     public Game(Player player1, Player player2) {
         brd = new Board();
-//        brd.print();
-//        brd.move(0,1,0,3);
-//        brd.randomMove();
-//        brd.randomMove();
         while (isRunning()) {
-//            if(!brd.Random(brd) && brd.getPieceNumber() > 2) finish();
-            if (!player1.getBrain().SmartMove(brd)) {
+            if (brd.getMove_count() > 150) {
                 int elo_p1 = player1.getElo();
                 int elo_p2 = player2.getElo();
-                player1.setElo(elo_p2, 1);
-                player2.setElo(elo_p1, 0);
+                player1.setElo(elo_p2, 0.5f);
+                player2.setElo(elo_p1, 0.5f);
                 break;
             }
-            if (!player2.getBrain().Random(brd)) {
-                int elo_p1 = player1.getElo();
-                int elo_p2 = player2.getElo();
-                player1.setElo(elo_p2, 0);
-                player2.setElo(elo_p1, 1);
-                break;
-            }
-        }
-
-        for (int i = 0; i < 2; i++) {
+            if(brd.getPieceNumber() <= 2) finish();
+            brd = player1.getBrain().SmartMove(brd);
+//            new Move().printStat(brd);
+            if(brd.getPieceNumber() <= 2) finish();
+            brd = player2.getBrain().SmartMove(brd);
+//            new Move().printStat(brd);
         }
 //        EventQueue.invokeLater(new Main());
     }

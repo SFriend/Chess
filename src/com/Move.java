@@ -7,45 +7,39 @@ public class Move {
 	boolean calculating = false;
 
 	String noation = "abcdefgh";
+
+	String lastMove = "";
 	/**
 	 * moved = true if stones got moved
 	 * @param brd
      */
 	public boolean Normal (Board brd, int x1, int y1, int x2, int y2) {
-		if (brd.isEmpty(x1, y1)) return false; // empty field picked
-		if (brd.isColorEqual(x1, y1, x2, y2)) return false;
-		if (x1 == x2 && y1 == y2) return false; // move to same field
-		if (new Logic(brd, x1, y1, x2, y2).ableToMove()) {
-			if (brd.getPiece(x1, y1).getID() == 5) {
-				System.out.print("King move");
-			}
-			String temp = "";
-			temp += brd.getPiece(x1,y1).getName().charAt(0);
-			temp += noation.charAt(x1) + "" + (y1 + 1); // move 1
-			temp += brd.isEmpty(x2, y2) ? "- " : "x";
+		if (new Logic(brd, x1, y1, x2, y2).correctMove()) {
+			lastMove = "";
+			lastMove += brd.getPiece(x1,y1).getName().charAt(0);
+			lastMove += noation.charAt(x1) + "" + (y1 + 1); // move 1
+			lastMove += brd.isEmpty(x2, y2) ? "- " : "x";
 			for (Piece pc2: brd.getPlayerStones().get(1-brd.getPlayer())) { // piece p2
 				if (pc2.getX() == x2 && pc2.getY() == y2) {
-					temp += pc2.getName().charAt(0);
+					lastMove += pc2.getName().charAt(0);
 				}
 			}
-			temp += noation.charAt(x2) + "" + (y2 + 1); // move 2
+			lastMove += noation.charAt(x2) + "" + (y2 + 1); // move 2
 			brd.movePiece(x1, y1, x2, y2); // moves
 			brd.incrementMoveCount();
 //			if(isCheck(brd)) temp += "+";
-			brd.print();
-			System.out.println(temp);
-
-//			if(brd.getField(x2, y2).isPawn()){ // pawn to special piece
-//				if(y2 == 0 || y2 == 7){
-//					int randomStone = (int)(Math.random() * (5 - 1) + 1);
-//
-////					brd.setField(x2, y2, new Field(x2, y2).addPiece(null)));
-////					brd.getField(p2).setString(figuren.charAt(randomStone)+ "" + brd.getField(p2).getColor());
-//				}
-//			}
+//			brd.print();
+//			System.out.println(temp);
 			return true;
 		}
 		return false;
+	}
+
+	public void printStat(Board brd) {
+		brd.print();
+		brd.getBalance();
+		System.out.println("should print");
+		System.out.println(lastMove);
 	}
 
 	public boolean Random(Board brd) { // TODO random with arraylist -> picks one piece

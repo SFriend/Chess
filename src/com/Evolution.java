@@ -10,29 +10,25 @@ import java.util.Arrays;
  * Created by pdk on 14.10.16.
  */
 public class Evolution {
-    static int number_of_computer = 10;
+    static int number_of_games = 10;
     static final float MAX_VALUES_DELTA = 10;
     static ArrayList<Player> players = new ArrayList<>();
 
     public static void main(String[] args){
 //        System.out.println(randomGenerator(2));
 //        System.out.println(randomGenerator(2));
-
-//        for (int c = 0; c < number_of_computer; c++) {
-//            smart.add(new Smart(c,MAX_VALUES_DELTA));
-//        }
-
-        for (int i = 0; i < number_of_computer; i++) {
+        for (int i = 0; i < number_of_games*2; i++) {
             players.add(new Player(i,MAX_VALUES_DELTA));
         }
-        for (int i = 0; i < number_of_computer; i+=2) {
-            Game game = new Game(players.get(i), players.get(i+1));
+        for (int i = 0; i < number_of_games; i++) {
+            Game game = new Game(players.get(i*2), players.get((i*2)+1));
+            System.out.println("finish " + i);
         }
-
-        purge(50);
+        for (int i = 0; i < players.size(); i++) {
+            System.out.println(players.get(i).getElo());
+        }
+//        purge(50);
 //        System.out.println(smart.get(0).pointDelta(new Point(1, 1), new Point(2, 1)));
-
-
     }
 
     public static void purge(double p) {
@@ -53,7 +49,7 @@ public class Evolution {
         }
     }
 
-    public int getNumber_of_computer() {
-        return number_of_computer;
+    public int getNumber_of_games() {
+        return number_of_games;
     }
 }

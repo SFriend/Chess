@@ -41,7 +41,7 @@ public class Main extends JPanel implements Runnable {
     static Image buffer;
 
     ChessPrint menu;
-    public static Game game = new Game(new Player(), new Player());
+    public static Game game = new Game(new Player(0,10), new Player(1,10));
 
     public static Graphics2D gBuffer;
     @Override

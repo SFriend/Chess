@@ -10,7 +10,7 @@ import java.util.concurrent.SynchronousQueue;
 /**
  * Created by pdk on 12.10.16.
  */
-public class Board extends Move {
+public class Board {
     int move_count = 0;
     boolean whiteTurn = true;
     DoublePoint[] balance;
@@ -58,9 +58,25 @@ public class Board extends Move {
     }
 
     public void movePiece(int x1, int y1, int x2, int y2) {
-        getPiece(x1,y1).setXY(x2,y2);
-        if (!isEmpty(x2,y2)) {
+        if (isEmpty(x2,y2)) {
+//            System.out.println("empty");
+            getPiece(x1,y1).setXY(x2,y2);
+        } else {
             playerStones.get(1-getPlayer()).remove(getPiece(x2,y2));
+            getPiece(x1,y1).setXY(x2,y2);
+        }
+//        System.out.println(getPiece(x2,y2).getID());
+
+        if (getPiece(x2,y2).getID() == 0) { // pawn to special piece
+            if (y2 == 0 || y2 == 7) {
+//                System.out.println("replace");
+                playerStones.get(getPlayer()).remove(getPiece(x2,y2));
+                playerStones.get(getPlayer()).add(new Queen(x2,y2,0,whiteTurn));
+//					int randomStone = (int)(Math.random() * (5 - 1) + 1);
+
+//					brd.setField(x2, y2, new Field(x2, y2).addPiece(null)));
+//					brd.getField(p2).setString(figuren.charAt(randomStone)+ "" + brd.getField(p2).getColor());
+            }
         }
     }
 
@@ -74,6 +90,55 @@ public class Board extends Move {
             pointSum[n].divide(playerStones.get(0).size());
         }
         balance = pointSum;
+    }
+
+    public double getMiddleDelta(DoublePoint doublePoint) {
+        double a = Math.pow(doublePoint.getX()-getBalance()[getPlayer()].getX(),2);
+        double b = Math.pow(doublePoint.getY()-getBalance()[getPlayer()].getY(),2);
+        return Math.sqrt(a+b);
+    }
+
+    public double boardValue(double[] values_stones) {
+        return enemy(values_stones)+enemyHit(values_stones)+support();
+    }
+
+    private int support(){
+        int sup = 0;
+        for (Piece pc1: playerStones.get(getPlayer())) {
+            for (Piece pc2: playerStones.get(getPlayer())) {
+                if (!pc1.equals(pc2)) {
+                    if(new Logic(this, pc1.getX(),pc1.getY(), pc2.getX(), pc2.getY()).ableToMove())
+                        sup++;
+                }
+            }
+        }
+        return sup;
+    }
+
+    private double enemy(double[] values_stones){
+        int enemy = 0;
+        for (Piece pc1: playerStones.get(getPlayer())) {
+            for (Piece pc2 : playerStones.get(1-getPlayer())) {
+                if (!pc1.equals(pc2)) {
+                    if(new Logic(this, pc2.getX(),pc2.getY(), pc1.getX(), pc1.getY()).ableToMove())
+                        enemy -= values_stones[pc1.getID()];
+                }
+            }
+        }
+        return enemy;
+    }
+
+    private double enemyHit(double[] values_stones){
+        double enemyHit = 0;
+        for (Piece pc1: playerStones.get(getPlayer())) {
+            for (Piece pc2 : playerStones.get(1-getPlayer())) {
+                if (!pc1.equals(pc2)) {
+                    if(new Logic(this, pc1.getX(),pc1.getY(), pc2.getX(), pc2.getY()).ableToMove())
+                        enemyHit += values_stones[pc1.getID()];
+                }
+            }
+        }
+        return enemyHit;
     }
 
     public void print() {
@@ -160,6 +225,7 @@ public class Board extends Move {
     }
 
     public DoublePoint[] getBalance() {
+        calcBalance();
         return balance;
     }
 
