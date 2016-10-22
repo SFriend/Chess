@@ -1,30 +1,23 @@
 package com;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class Move {
 	boolean calculating = false;
-
-	String noation = "abcdefgh";
-
-	String lastMove = "";
-	/**
-	 * moved = true if stones got moved
-	 * @param brd
-     */
+	private String nation = "abcdefgh";
+	private String lastMove = "";
 	public boolean Normal (Board brd, int x1, int y1, int x2, int y2) {
-		if (new Logic(brd, x1, y1, x2, y2).correctMove()) {
-			lastMove = "";
-			lastMove += brd.getPiece(x1,y1).getName().charAt(0);
-			lastMove += noation.charAt(x1) + "" + (y1 + 1); // move 1
-			lastMove += brd.isEmpty(x2, y2) ? "- " : "x";
-			for (Piece pc2: brd.getPlayerStones().get(1-brd.getPlayer())) { // piece p2
-				if (pc2.getX() == x2 && pc2.getY() == y2) {
-					lastMove += pc2.getName().charAt(0);
-				}
-			}
-			lastMove += noation.charAt(x2) + "" + (y2 + 1); // move 2
+		if (new Logic(brd, x1, y1, x2, y2).canMove()) {
+//			lastMove = "";
+//			lastMove += brd.getPiece(x1,y1).getName().charAt(0);
+//			lastMove += nation.charAt(x1) + "" + (y1 + 1); // move 1
+//			lastMove += brd.isEmpty(x2, y2) ? "- " : "x";
+//			for (Piece pc2 : brd.getPlayerStones().get(1 - brd.getPlayer())) { // piece p2
+//				if (pc2.getX() == x2 && pc2.getY() == y2) {
+//					lastMove += pc2.getName().charAt(0);
+//				}
+//			}
+//			lastMove += nation.charAt(x2) + "" + (y2 + 1); // move 2
 			brd.movePiece(x1, y1, x2, y2); // moves
 			brd.incrementMoveCount();
 //			if(isCheck(brd)) temp += "+";
@@ -33,13 +26,6 @@ public class Move {
 			return true;
 		}
 		return false;
-	}
-
-	public void printStat(Board brd) {
-		brd.print();
-		brd.getBalance();
-		System.out.println("should print");
-		System.out.println(lastMove);
 	}
 
 	public boolean Random(Board brd) { // TODO random with arraylist -> picks one piece
@@ -104,8 +90,5 @@ public class Move {
 			}
 		}
 		return p;
-	}
-
-	public void moveRe() { // TODO undo move
 	}
 }

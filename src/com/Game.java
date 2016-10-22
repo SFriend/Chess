@@ -1,7 +1,5 @@
 package com;
 
-import java.awt.*;
-import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -14,21 +12,29 @@ public class Game {
 
     public Game(Player player1, Player player2) {
         brd = new Board();
+        float points = 0f;
         while (isRunning()) {
-            if (brd.getMove_count() > 150) {
-                int elo_p1 = player1.getElo();
-                int elo_p2 = player2.getElo();
-                player1.setElo(elo_p2, 0.5f);
-                player2.setElo(elo_p1, 0.5f);
+            if (brd.getMove_count() > 100 || brd.getPieceNumber() <= 2) {
+                points = 0.5f;
                 break;
             }
-            if(brd.getPieceNumber() <= 2) finish();
-            brd = player1.getBrain().SmartMove(brd);
-//            new Move().printStat(brd);
-            if(brd.getPieceNumber() <= 2) finish();
-            brd = player2.getBrain().SmartMove(brd);
-//            new Move().printStat(brd);
+
+            Board temp = brd.cloneBoard();
+            if (player1.getBrain().SmartMove(brd)) {
+                points = 1f;
+                break;
+            }
+
+            Board temp2 = brd.cloneBoard();
+            if (player2.getBrain().SmartMove(brd)) {
+                points = 0f;
+                break;
+            }
         }
+        int elo_p1 = player1.getElo();
+        int elo_p2 = player2.getElo();
+        player1.setElo(elo_p2, points);
+        player2.setElo(elo_p1, 1-points);
 //        EventQueue.invokeLater(new Main());
     }
 

@@ -21,7 +21,7 @@ public class Evolution {
             players.add(new Player(i,MAX_VALUES_DELTA));
         }
         for (int i = 0; i < number_of_games; i++) {
-            Game game = new Game(players.get(i*2), players.get((i*2)+1));
+            new Game(players.get(i*2), players.get((i*2)+1));
             System.out.println("finish " + i);
         }
         for (int i = 0; i < players.size(); i++) {

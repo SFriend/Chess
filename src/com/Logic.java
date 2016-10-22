@@ -30,7 +30,9 @@ public class Logic {
 //		temp_brd.print();
 //		System.out.println("+++++++++++++++++++ " + brd);
 //		brd.print();
+//		System.out.println("HELLO" + !isCheck(temp_brd));
 		return !isCheck(temp_brd);
+//		return true;
 	}
 
 	public boolean isCheck(Board brd) {
@@ -46,7 +48,6 @@ public class Logic {
 				break;
 			}
 		}
-//		System.out.println("all right");
 		return false;
 	}
 
@@ -75,17 +76,18 @@ public class Logic {
 		else if(a > b) return -1;
 		else return 0;
 	}
-	
+
 	public boolean correctMove() {
 		if (inTheWay()) return false;
-		switch (brd.getPiece(x1,y1).getID()){
-			case 0 : return pawnMove(); // pawn //TODO en passant
-			case 1 : return rookMove(); // rook
-			case 2 : return knightsMove(); // knight
-			case 3 : return bishopMove(); // bishop
-			case 4 : return queenMove(); // queen
-			case 5 : return kingMove(); // king
-			default : { System.out.println("wronbg input piece " + brd.getPiece(x1,y1).getID()); } break;
+		switch (brd.getPiece(x1, y1).getID()) {
+			case 0: return pawnMove(); // pawn //TODO en passant
+			case 1: return rookMove(); // rook
+ 			case 2: return knightsMove(); // knight
+			case 3: return bishopMove(); // bishop
+			case 4: return queenMove(); // queen
+			case 5: return kingMove(); // king
+			default: { System.out.println("wronbg input piece " + brd.getPiece(x1, y1).getID()); }
+			break;
 		}
 		return false;
 	}
@@ -110,7 +112,6 @@ public class Logic {
 			}
 		}
 		return false;
-
 	}
 
 	private boolean rookMove(){
