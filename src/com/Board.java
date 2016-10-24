@@ -11,12 +11,11 @@ import java.util.concurrent.SynchronousQueue;
  * Created by pdk on 12.10.16.
  */
 public class Board {
-    int move_count = 0;
-    boolean whiteTurn = true;
-    DoublePoint[] balance;
-    ArrayList<Piece> player1 = new ArrayList<>();
-    ArrayList<Piece> player2 = new ArrayList<>();
-    ArrayList<ArrayList<Piece>> playerStones = new ArrayList<>();
+    private int move_count;
+    private boolean whiteTurn = true;
+    private ArrayList<Piece> player1 = new ArrayList<>();
+    private ArrayList<Piece> player2 = new ArrayList<>();
+    private ArrayList<ArrayList<Piece>> playerStones = new ArrayList<>();
 
     public Board() {
         playerStones.add(player1);
@@ -37,7 +36,6 @@ public class Board {
             playerStones.get(n).add(new Knight  (6,y,v,w));
             playerStones.get(n).add(new Rook    (7,y,v,w));
         }
-        calcBalance();
     }
 
     public Board cloneBoard() {
@@ -45,7 +43,6 @@ public class Board {
 
         clone.setMove_count(move_count);
         clone.setWhiteTurn(whiteTurn);
-        clone.setBalance(balance);
 
         clone.player1.clear();
         clone.player2.clear();
@@ -72,7 +69,7 @@ public class Board {
         }
     }
 
-    private void calcBalance() {
+    private DoublePoint[] calcBalance() {
         double gap = 0.5;
         DoublePoint pointSum[] = {new DoublePoint(0, 0), new DoublePoint(0, 0)};
         for (int n = 0; n < 2; n++) {
@@ -81,7 +78,7 @@ public class Board {
             }
             pointSum[n].divide(playerStones.get(0).size());
         }
-        balance = pointSum;
+        return pointSum;
     }
 
     public double getMiddleDelta(int player, DoublePoint prefBoardMiddle) {
@@ -110,10 +107,9 @@ public class Board {
         for (int i = 0; i < 8; i++) {
             System.out.print(notation.charAt(i) + "  ");
         } System.out.println();
-        balance[1-getPlayer()].print();
+        getBalance()[1-getPlayer()].print();
 //        balance[1].print();
         System.out.println("Stones: " + (playerStones.get(0).size() + playerStones.get(1).size()));
-
     }
 
     public void incrementMoveCount() {
@@ -169,13 +165,20 @@ public class Board {
         return player2;
     }
 
-    public ArrayList<ArrayList<Piece>> getPlayerStones() {
+    public ArrayList<ArrayList<Piece>> getStones() {
         return playerStones;
     }
 
+    public ArrayList<Piece> getPlayerStones() {
+        return playerStones.get(getPlayer());
+    }
+
     public DoublePoint[] getBalance() {
-        calcBalance();
-        return balance;
+        return calcBalance();
+    }
+
+    public boolean getWhiteTurn() {
+        return whiteTurn;
     }
 
     public void setPlayerStones(ArrayList<ArrayList<Piece>> playerStone) {
@@ -198,7 +201,41 @@ public class Board {
         this.whiteTurn = whiteTurn;
     }
 
-    public void setBalance(DoublePoint[] balance) {
-        this.balance = balance;
+    public void findBestMove(ArrayList<Board> possibleBoards, double[] values_style, double[] values_stones, DoublePoint prefBoardMiddle) {
+        ArrayList<Board> bestValue = new ArrayList<>();
+        bestValue.add(possibleBoards.get(0));
+        int p = getPlayer();
+        for (int i = 1; i < possibleBoards.size(); i++) {
+            double a = new BoardValue(possibleBoards.get(i)).allVals(values_style, values_stones)[p];
+            double b = new BoardValue(bestValue.get(0)).allVals(values_style, values_stones)[p];
+            if (a > b) {
+                bestValue.clear();
+                bestValue.add(possibleBoards.get(i));
+            } else if (a == b) {
+                bestValue.add(possibleBoards.get(i));
+            }
+        }
+        Board best = bestValue.get(0);
+        for (int i = 1; i < bestValue.size(); i++) {
+            if (bestValue.get(i).getMiddleDelta(p, prefBoardMiddle) < best.getMiddleDelta(p, prefBoardMiddle)) {
+                best = bestValue.get(i);
+            }
+        }
+        setBoard(best);
+    }
+
+    public void setBoard(Board brd) {
+        setMove_count(brd.getMove_count());
+        setWhiteTurn(brd.getWhiteTurn());
+        player1.clear();
+        player2.clear();
+        playerStones.clear();
+        for (int i = 0; i < brd.getPlayer1().size(); i++) player1.add(brd.getPlayer1().get(i).clonePiece());
+        for (int i = 0; i < brd.getPlayer2().size(); i++) player2.add(brd.getPlayer2().get(i).clonePiece());
+        setPlayer1(player1);
+        setPlayer2(player2);
+        playerStones.add(player1);
+        playerStones.add(player2);
+        setPlayerStones(playerStones);
     }
 }

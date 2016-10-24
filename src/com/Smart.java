@@ -2,51 +2,42 @@ package com;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Smart extends Move{
-	final int id;
-	int generation;
-	double[] values_stones;
-	double[] values_style;
-	DoublePoint prefBoardMiddle;
+	private double[] values_stones = new double[6];
+	private double[] values_style = new double[3];
+	private DoublePoint prefBoardMiddle;
 
-	int posibleMoves[][] = new int[8][8];
-	int white, black;
-	int amount;
-	int whiteMax, whiteMaxAmount;
-	int maxGood = 0;
-	int max;
-
-	public Smart(int id, final float MAX_VALUES_DELTA) {
-		this.id = id;
-		double[] values_stones = new double[6];
+	public Smart() {
 		int scale = 10;
-		for (int i = 0; i < values_stones.length; i++) {
-//			values_stones[i] = (i + 1) + (Math.random() * (i + 1) * 2) / (MAX_VALUES_DELTA * 2); // old 1 2 3 4 5
-			values_stones[i] = Math.random() * (scale - 1) + 1;//(scale) + (Math.random() * (scale * 2)) / (MAX_VALUES_DELTA * 2);
-		}
-		double[] values_style = new double[3];
-		for (int i = 0; i < values_style.length; i++) {
-			values_style[i] = (Math.random() * (scale  - 1)) + 1;
-		}
-		DoublePoint prefBoardMiddle = new DoublePoint(Math.random() * 8, Math.random() * 8);
-//		System.out.println("Stats of Computer Nr. " + id);
-//		for (int i = 0; i < getRandomStats().length; i++) {
-//			System.out.println(Arrays.toString((double[]) getRandomStats()[i]));
-//		}
-//		((DoublePoint) getRandomStats()[2]).print();
-//		System.out.println();
-		this.values_stones = values_stones;
-		this.values_style = values_style;
-		this.prefBoardMiddle = prefBoardMiddle;
-		if(values_stones.length != 6) System.out.print("not enought values");
+		fillRandom(values_stones, scale);
+		fillRandom(values_style, scale);
+		this.prefBoardMiddle = new DoublePoint(Math.random() * 8, Math.random() * 8);
+	}
+
+	public Smart clone() {
+		Smart clone = new Smart();
+		for (int i = 0; i < getValuesStones().length; i++)
+			clone.values_stones[i] = getValuesStones()[i];
+		for (int i = 0; i < getValuesStyle().length; i++)
+			clone.values_style[i] = getValuesStyle()[i];
+		clone.prefBoardMiddle = getPrefBoardMiddle().clone();
+		return clone;
 	}
 
 	public boolean SmartMove(Board brd) {
+//		System.out.println((brd.getPlayerStones().size() * 13) / 16.0);
+		if (brd.getPlayerStones().size() <
+				(brd.getStones().get(1-brd.getPlayer()).size() * 13) / 16.0) {
+//			System.out.println("won");
+			return false;
+		}
+//		if(brd.getMove_count() > 20 && brd.getMove_count() < 32) { // if loses one piece every turn
+//			if (brd.getPlayerStones().size() < 16-(brd.getMove_count()/2)) return false;
+//		}
 		boolean moved = false;
 		ArrayList<Board> possibleBoards = new ArrayList<>();
-		for (Piece pc1: brd.playerStones.get(brd.getPlayer())) {
+		for (Piece pc1: brd.getPlayerStones()) {
 			for(int x2 = 0; x2 < 8; x2++) {
 				for (int y2 = 0; y2 < 8; y2++) {
 					if (new Logic(brd, pc1.getX(), pc1.getY(), x2, y2).canMove()) {
@@ -58,48 +49,28 @@ public class Smart extends Move{
 				}
 			}
 		}
-		if (!moved) {
-			System.out.println("Schachmatt");
-			return false;
-		}
-		brd = findBestMove(brd, possibleBoards);
+		if (!moved) return false;
+		brd.findBestMove(possibleBoards, values_style, values_stones, prefBoardMiddle);
 		return true;
-//		getPrefBoardMiddle().print();
-//		brd.print();
-//		System.out.println(brd.boardValue(values_style, values_stones)[0]);
-//		System.out.println(brd.boardValue(values_style, values_stones)[1]);
-//		System.out.println(prefBoardMiddle);
-//		return brd;
-	}
-
-	public Board findBestMove(Board brd, ArrayList<Board> possibleBoards) {
-		ArrayList<Board> bestValue = new ArrayList<>();
-		bestValue.add(possibleBoards.get(0));
-		for (int i = 1; i < possibleBoards.size(); i++) {
-			if (new BoardValue(possibleBoards.get(i)).allVals(values_stones)[brd.getPlayer()] >
-					new BoardValue(bestValue.get(0)).allVals(values_stones)[brd.getPlayer()]) {
-				bestValue.clear();
-				bestValue.add(possibleBoards.get(i));
-			} else if (new BoardValue(possibleBoards.get(i)).allVals(values_stones)[brd.getPlayer()] ==
-					new BoardValue(bestValue.get(0)).allVals(values_stones)[brd.getPlayer()]) {
-				bestValue.add(possibleBoards.get(i));
-			}
-		}
-		Board best = bestValue.get(0);
-		for (int i = 1; i < bestValue.size(); i++) {
-			if (bestValue.get(i).getMiddleDelta(brd.getPlayer(), prefBoardMiddle) < best.getMiddleDelta(brd.getPlayer(), prefBoardMiddle)) {
-				best = bestValue.get(i);
-			}
-		}
-		return best;
 	}
 
 	public void mutate() {
-		generation++;
+		mutateArray(values_stones, 10);
+		mutateArray(values_style, 10);
+		prefBoardMiddle.setX(prefBoardMiddle.getX() + (Math.random() * prefBoardMiddle.getX() / 5) - prefBoardMiddle.getX() / 10);
+		prefBoardMiddle.setY(prefBoardMiddle.getY() + (Math.random() * prefBoardMiddle.getY() / 5) - prefBoardMiddle.getY() / 10);
 	}
 
-	public Object[] getRandomStats(){
-		return new Object[] {values_stones, values_style, prefBoardMiddle};
+	public void fillRandom(double[] array, double scale) {
+		for (int i = 0; i < array.length; i++) {
+			array[i] = Math.random() * (scale - 1) + 1;
+		}
+	}
+
+	public void mutateArray(double[] array, double scale) {
+		for (int i = 0; i < array.length; i++) {
+			array[i] += (Math.random() * array[i] / (scale / 2)) - (array[i] / scale);
+		}
 	}
 
 	public double[] getValuesStones() { // return the values of the stones
@@ -118,31 +89,18 @@ public class Smart extends Move{
 		return Math.sqrt(Math.pow(p2.getX()-p1.getX(), 2) + Math.pow(p2.getY()-p1.getY(), 2));
 	}
 
-	public void searchForMax() {
-		black = 0;
-		white = 0;
-		for(int x1 = 0; x1 < 8; x1++){
-			for(int y1 = 0; y1 < 8; y1++){
-				for (int n = 0; n < 2; n++) {
-//					for (Piece pc: brdgetPlayerStones().get(n)) {
-//						if(pc.getX() == x1 && pc.getY() == y1) {
-//							if (n == 0) white += posibleMoves[x1][y1];
-//							else black += posibleMoves[x1][y1];
-//						}
-//					}
-				}
-			}
-		}
-		if(white >= maxGood) max++;
-		if(white > whiteMax) {whiteMax = white; whiteMaxAmount = 1;}
-		else if(white == whiteMax) whiteMaxAmount++;
+	public void printStats() {
+		System.out.println("Computer Stats");
+		printArray(values_stones);
+		printArray(values_style);
+		prefBoardMiddle.print();
 	}
 
-	public void print(){
-		for(int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				System.out.print(posibleMoves[j][i] + " ");
-			} System.out.println();
-		} System.out.println(white);
+	public void printArray(double[] array) {
+		System.out.print("[");
+		for (int i = 0; i < array.length; i++) {
+			System.out.print((int)(array[i] * 100) / 100.0);
+			if (i < array.length-1) System.out.print(" : ");
+		} System.out.println("]");
 	}
 }

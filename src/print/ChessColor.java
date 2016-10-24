@@ -10,6 +10,10 @@ public class ChessColor {
     static String[] color = {"Weiss", "Gelb", "Orange", "Rot", "Pink", "Magenta", "Cyan", "Blau", "Gruen", "Hellgrau", "Grau", "Dunkelgrau", "Schwarz"};
     static int[] count = new int[4]; //= 1000000, countColor2 = 1000011, countColor3 = 1000002, countColor4 = 1000006;
 
+    public ChessColor() {
+        count = new int[]{0,1,2,3};
+    }
+
     public boolean checkForSameColor() {
         for (int i = 0; i < count.length; i++) {
             for (int j = 0; j < count.length; j++) {

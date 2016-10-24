@@ -15,6 +15,7 @@ public class Logic {
 
 	public boolean canMove() {
 		if (brd.isEmpty(x1, y1)) return false; // empty field picked
+		if (brd.getPiece(x1,y1).isWhite() != (brd.getPlayer()==0)) return false;
 		if (brd.isColorEqual(x1, y1, x2, y2)) return false; // same team
 		if (x1 == x2 && y1 == y2) return false; // move to same field
 		return ableToMove();
@@ -24,7 +25,6 @@ public class Logic {
 		if (!correctMove()) return false; // move viable
 		Board temp_brd = brd.cloneBoard();
 		temp_brd.movePiece(x1, y1, x2, y2);
-
 //		temp_brd.incrementMoveCount();
 //		System.out.println("------------------- " + temp_brd);
 //		temp_brd.print();
@@ -36,9 +36,9 @@ public class Logic {
 	}
 
 	public boolean isCheck(Board brd) {
-		for (Piece pc2 : brd.getPlayerStones().get(brd.getPlayer())) {
+		for (Piece pc2 : brd.getPlayerStones()) {
 			if (pc2.getID() == 5) { // Kings
-				for (Piece pc1 : brd.getPlayerStones().get(1-brd.getPlayer())) {
+				for (Piece pc1 : brd.getStones().get(1-brd.getPlayer())) {
 					if(new Logic(brd, pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY()).correctMove()) {
 //						System.out.println("check");
 //						System.out.printf("%d %d %d %d\n", pc1.getX(), pc1.getY(), pc2.getX(), pc2.getY());
@@ -150,6 +150,6 @@ public class Logic {
 	}
 
 	public boolean stalemate() {
-		return (brd.getPlayerStones().get(0).size() + brd.getPlayerStones().get(1).size()) <= 2;
+		return (brd.getPlayerStones().size() + brd.getStones().get(1).size()) <= 2;
 	}
 }

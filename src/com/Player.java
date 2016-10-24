@@ -2,49 +2,50 @@ package com;
 
 import com.elo.Elo;
 
-/**
- * Created by peter on 18.10.16.
- */
 public class Player {
-    private Elo elo = new Elo();
-    private int wins;
-    private int games;
-    private int lose;
-    private Smart brain;
+    public Elo elo = new Elo();
+    private String id = "";
+    private int generation;
+    private Smart brain = new Smart();
 
-    public Player(int id, final float MAX_VALUES_DELTA) {
-        brain = new Smart(id, MAX_VALUES_DELTA);
+    public Player(String id) {
+        this.id += id + " ";
+    }
+
+    public Player clone() {
+        Player clone = new Player(id+generation);
+        clone.setElo(elo.clone());
+        clone.setBrain(brain.clone());
+        clone.setGeneration(generation);
+        return clone;
+    }
+
+    public void mutate() {
+        brain.mutate();
+        generation++;
+    }
+
+    private void setElo(Elo elo) {
+        this.elo = elo;
+    }
+
+    public void setBrain(Smart brain) {
+        this.brain = brain;
+    }
+
+    public void setGeneration(int generation) {
+        this.generation = generation;
     }
 
     public Smart getBrain() {
         return brain;
     }
 
-    public void setElo(int p2, float outcome) {
-        this.elo.changeElo(p2, outcome);
+    public int getGeneration() {
+        return generation;
     }
 
-    public void loseGame() {
-        lose++;
-    }
-
-    public void gameWon() {
-        games++;
-    }
-
-    public int getElo() {
-        return elo.getElo();
-    }
-
-    public int getWins() {
-        return wins;
-    }
-
-    public int getLose() {
-        return lose;
-    }
-
-    public int getGames() {
-        return games;
+    public String getId() {
+        return id;
     }
 }

@@ -13,8 +13,8 @@ public class Main extends JPanel implements Runnable {
     private static final long serialVersionUID = 1L;
 
     public static int minsek;
-    public static int width = 100;
-    public static ChessColor color = new ChessColor();
+    public static int width = 60;
+//    public static ChessColor color = new ChessColor();
 
     static boolean computer = false;
     static boolean computerVScomputer = computer;
@@ -26,6 +26,7 @@ public class Main extends JPanel implements Runnable {
 
     static print.Button[][] btnsTime = new print.Button[2][4];
     static print.Button btnClock;
+    static Field[][] fields = new Field[8][8];
     static String log[] = new String[9999];
     static Mouse m = new Mouse();
     static Mouse lastMove = new Mouse();
@@ -40,10 +41,10 @@ public class Main extends JPanel implements Runnable {
     static Timer timeP2 = new Timer(1800);
     static Image buffer;
 
-    ChessPrint menu;
-    public static Game game = new Game(new Player(0,10), new Player(1,10));
-
+    public static Game game = new Game(new Player(""+0), new Player(""+1));
     public static Graphics2D gBuffer;
+
+    ChessPrint menu = new ChessPrint();
     @Override
     public void run() {
         JFrame f = new JFrame("Chess");
@@ -59,12 +60,16 @@ public class Main extends JPanel implements Runnable {
         f.addKeyListener(keylistener);
         f.addMouseListener(new RepaintOnClick());
         f.setAlwaysOnTop(true);
-        vorbereiten();
+        reset();
     }
 
     public Main() {
-        this.setPreferredSize(new Dimension((int) (1400 * width / 100) + width, (int) (900 * width / 100) + width));
+        this.setPreferredSize(new Dimension(scale(900) + width, scale(900) + width)); // 1400
         setLayout(null);
+    }
+
+    public static void main(String args[]) {
+        EventQueue.invokeLater(new Main());
     }
 
     public int scale(int n) {
@@ -77,12 +82,10 @@ public class Main extends JPanel implements Runnable {
         gBuffer.clearRect(0, 0, this.getSize().width, this.getSize().height);
         gBuffer.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-//		if ((double) this.getSize().width / this.getSize().height <= (double) 750 / 450)
-//			width = (this.getSize().width) / 14 - width / 14;
-//		else if ((double) this.getSize().width / this.getSize().height > (double) 750 / 450)
-//			width = (this.getSize().height) / 9 - width / 9;
-//		abstX = width;
-//		abstY = width;
+		if ((double) this.getSize().width / this.getSize().height <= (double) 750 / 450)
+			width = (this.getSize().width) / 9 - width / 9;
+		else if ((double) this.getSize().width / this.getSize().height > (double) 750 / 450)
+			width = (this.getSize().height) / 9 - width / 9;
 //		if (game && !calculating) {
 //			if (computer && player == 1)
 //				new Random(brd);
@@ -90,7 +93,7 @@ public class Main extends JPanel implements Runnable {
 //				new Random(brd);
 //		}
 
-        menu.print(lastMove.getX1(), lastMove.getY1(), lastMove.getX2(), lastMove.getY2());
+        menu.print(game, width);//lastMove.getX1(), lastMove.getY1(), lastMove.getX2(), lastMove.getY2());
         g.drawImage(buffer, 0, 0, this);
         repaint();
     }
@@ -116,8 +119,17 @@ public class Main extends JPanel implements Runnable {
 //		}
     }
 
-    public void vorbereiten() {
-        menu = new ChessPrint();
+    public void reset() {
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                fields[x][y] = new Field(width + width*x, width+width*y, width, width);
+            }
+        }
+        ChessPrint.choseStone = false;
+        ChessPrint.selection = false;
+
+        game = new Game(new Player(""+0), new Player(""+1));
+
         calculating = false;
         m = new Mouse();
         lastMove = new Mouse();
@@ -179,21 +191,40 @@ public class Main extends JPanel implements Runnable {
         }
 
         public void mouseClicked(MouseEvent evt) {
-            m.getP2().setLocation(evt.getX() - width, evt.getY() - width - 25);
-            int mx1 = m.getX2();
-            int my1 = m.getY2();
-            System.out.println(mx1 + " " + width * 8);
+//            m.getP2().setLocation(evt.getX(),evt.getY());// - width, evt.getY() - width - 25);
+            int mx1 = m.getX2();// - width;
+            int my1 = m.getY2();// - width - 25;
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    if(fields[x][y].isPressed(evt.getPoint())) {
+                        System.out.println(x + " " + y + " " +m.getX1()/width + " " + m.getY2()/width);
+                        if (!menu.selection && !menu.choseStone && !game.brd.isEmpty(x, y)) {
+                            m.p1.setLocation(x,y);
+                            menu.selection = true;
+                        } else if (menu.selection) {
+                            if (x == m.p1.getX() && y == m.p1.getY()) {
+                                menu.selection = false;
+                                menu.choseStone = false;
+                            } else if (!game.brd.isColorEqual(m.getX1()/width,m.getY2()/width,x,y)) {
+                                m.p2.setLocation(x,y);
+                                menu.choseStone = true;
+                            }
+                        }
+                    }
+                }
+            }
             if (isBetween(mx1, 0, width * 8)) { // board
                 if (isBetween(my1, 0, width * 8)) {
-//                    if (!selection && !choseStone) {
-//                        m.p1.setLocation(mx1 / width, my1 / 100);
-//                        selection = true;
-//                    } else if (selection) {
-//                        if (evt.getX() / width == m.p1.getX() && evt.getY() / width == m.p1.getY())
-//                            selection = false;
-//                        else {
+//                    if (!menu.selection && !menu.choseStone && !game.brd.isEmpty(mx1/width, my1/width)) {
+//                        m.p1.setLocation(mx1 / width, my1 / width);
+//                        menu.selection = true;
+//                    } else if (menu.selection) {
+//                        if ((evt.getX()-width) / width == m.p1.getX() && (evt.getY() - width - 25) / width == m.p1.getY()) {
+//                            menu.selection = false;
+//                            menu.choseStone = false;
+//                        } else { //if (!game.brd.isColorEqual(mx1/width,my1/width,m.getX1()/width,m.getY1()/width)) {
 //                            m.p2.setLocation(mx1 / width, my1 / width);
-//                            choseStone = true;
+//                            menu.choseStone = true;
 //                        }
 //                    }
 //					if (!choseStone) {
@@ -214,10 +245,10 @@ public class Main extends JPanel implements Runnable {
                 }
             }
 //			selection = isBetween(mx1, 0, width * 8) && isBetween(my1, 0, width * 8);
-            if (mx1 >= width * 11) { // settings
-                if (btnClock.isPressed(evt.getPoint()))
-                    if (isBetween(my1, 150, 175)) { // mode
-                        if (isBetween(mx1, 1140, 1165)) {
+            if (mx1 >= width * 9) { // settings
+                System.out.print("true");
+                if (btnClock.isPressed(evt.getPoint())) {
+                    if (isBetween(mx1, 1140, 1165)) {
                             computer = false;
                             computerVScomputer = false;
                             game.finish();
@@ -234,12 +265,14 @@ public class Main extends JPanel implements Runnable {
                             computerVScomputer = true;
                             game.finish();
                         }
-                    }
+                }
+                if (isBetween(my1, 150, 175)) { // mode
+                }
 
                 for (int i = 0; i < 2; i++) { // time
                     for (int j = 0; j < 4; j++) {
                         if (btnsTime[i][j].isPressed(evt.getPoint())) {
-                            color.change(i, j);
+//                            color.change(i, j);
                         }
                     }
                 }
@@ -303,9 +336,11 @@ public class Main extends JPanel implements Runnable {
                 case KeyEvent.VK_DOWN: width -= 5; return;
                 case KeyEvent.VK_UP: width += 5; return;
 //                case KeyEvent.VK_RIGHT: Timer.limit -= 10; return;
-                case KeyEvent.VK_ESCAPE: vorbereiten(); return;
+                case KeyEvent.VK_ESCAPE: reset(); return;
                 case KeyEvent.VK_G: printLog(); return;
                 case KeyEvent.VK_H: nullLog(); return;
+                case KeyEvent.VK_S: game.start(); return;
+                case KeyEvent.VK_N: game.nextPlayer(); return;
                 default: System.out.println("Keyinput wrong");
             }
         }

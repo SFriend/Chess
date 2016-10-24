@@ -1,51 +1,59 @@
 package print;
 
+import com.Game;
+import com.Move;
+
 import java.awt.*;
 
-public class ChessPrint extends Main {
+public class ChessPrint {
 
-	boolean computer;
-	boolean computerVScomputer;
+	public static boolean selection;
+	public static boolean choseStone;
 
-//	Board brd = new Board(8);
+	private boolean computer;
+	private boolean computerVScomputer;
+	private boolean easterEgg[] = new boolean[10];
+	private boolean uhrSek = false;
+	private Timer timeP1 = new Timer(1800);
+	private Timer timeP2 = new Timer(1800);
+	private int width, abstX, abstY;
+	private int quaX;
+	private int quaY = 100;
 
-	static boolean easterEgg[] = new boolean[10];
-	static boolean uhrSek = false;
-	static Timer timeP1 = new Timer(1800);
-	static Timer timeP2 = new Timer(1800);
-	static int width = 100, abstX = width, abstY = width;
-	static int quaX;
-	static int quaY = 100;
+	Graphics2D gBuffer;
+	Game game;
+	ChessColor color = new ChessColor();
 
-//	ChessStones chessStones = new ChessStones(brd);
-//	ChessColor color = new ChessColor();
+	public ChessPrint() {
+	}
 	
-	public void print(int x1, int y1, int x2, int y2){
-		Schachfeld();
+	public void print(Game game, int width) { //int x1, int y1, int x2, int y2){
+		this.game = game;
+		this.width = width;
+		abstX = width;
+		abstY = width;
+		gBuffer = Main.gBuffer;
+		CheckBoard(width);
 		int selecColor = 5;
 		while (color.checkForSameColorSelection(selecColor)) {
 			selecColor++;
 		}
 		gBuffer.setColor(color.getColor(selecColor % color.getLength()));
-//		if (game.isSelected()) { // prints selection
-//			Field(x1, y1);
-//		}
-//		if(game.isChosen()){ // prints chose
-//			Field(x2, y2);
-//		}
-//		new ChessStones(brd);
+		if (selection) { // prints selection
+			Field(Main.m.getX1(), Main.m.getY1());
+		}
+		if(choseStone){ // prints chose
+			Field(Main.m.getX2(), Main.m.getY2());
+		}
+		new ChessStones(game.brd, gBuffer);
 //		if(choseStone) new ChessStones().ChoseStone(choseStoneX, choseStoneY);
-		Settings();
-		Uhren();
-
-
-//		if (game.isSelected() && game.isChosen() && game.isRunning()) {
-////			new Move(brd, game.m.p1, m.p2);
-//		}
+//		Settings();
+//		clock(timeP1, false);
+//		clock(timeP2, true);
 	}
 
-	public int scale(int n){
-		return (n * width) / 100;
+	public int scale(double n){
+		return (int)(n * width) / 100;
 	}
 
 	public void oval(int x, int y, int width, int height){
@@ -53,19 +61,20 @@ public class ChessPrint extends Main {
 	}
 
 	public void Settings(){
-		if(minsek%2==0) uhrSek = true;
-		else uhrSek = false;
+//		if(minsek%2==0) uhrSek = true;
+//		else
+			uhrSek = false;
 		
 		//Start Stop Pause
 		if(game.isRunning()){
-			TextBox(scale(1140), (int)(-40*width/100), (int)(220*width/100), scale(60), Color.orange);
-			TextBox(scale(1262), (int)(-35*width/100), (int)(3*width/100), scale(50), Color.black);
+			TextBox(scale(1140), scale(-40), scale(220), scale(60), Color.orange);
+			TextBox(scale(1262), scale(-35), scale(3), scale(50), Color.black);
 			gBuffer.setColor(Color.black);
 			gBuffer.setFont(new Font("Arial", Font.BOLD, scale(36)));
-			gBuffer.drawString("Pause", (int)(1150*width/100) + abstX, (int)(3*width/100) + abstY);
-			gBuffer.drawString("Stop", (int)(1270*width/100) + abstX, (int)(3*width/100) + abstY);
+			gBuffer.drawString("Pause", scale(1150) + abstX, scale(3) + abstY);
+			gBuffer.drawString("Stop", scale(1270) + abstX, scale(3) + abstY);
 		} else {
-			TextBox(scale(1140), (int)(-40*width/100), (int)(220*width/100), scale(60), Color.orange);
+			TextBox(scale(1140), scale(-40), scale(220), scale(60), Color.orange);
 			gBuffer.setColor(Color.black);
 			gBuffer.setFont(new Font("Arial", Font.BOLD, scale(40)));
 //			if(game.isPaused())
@@ -74,7 +83,7 @@ public class ChessPrint extends Main {
 		}
 		gBuffer.setColor(Color.black);
 		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(36)));
-		gBuffer.drawString("Spielmodus", 11*width + (int)(45*width/100) + abstX, (int)(80*width/100) + abstY);
+		gBuffer.drawString("Spielmodus", 11*width + (45) + abstX, scale(80) + abstY);
 		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(30)));
 		gBuffer.drawString("SvS", scale(1123) + abstX, scale(140) + abstY);
 		gBuffer.drawString("SvC", scale(1193) + abstX, scale(140) + abstY);
@@ -93,17 +102,17 @@ public class ChessPrint extends Main {
 		else if( computer &&  computerVScomputer) oval(1355, 150 + 5, 15, 15);
 		
 		gBuffer.setColor(Color.black);
-		gBuffer.setFont(new Font("Arial", Font.BOLD, (int)(34*width/100)));
+		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(34)));
 		gBuffer.drawString("Farbe der Felder", scale(1126) + abstX, scale(243) + abstY);
 
-		gBuffer.setFont(new Font("Arial", Font.BOLD, (int)(27*width/100)));
+		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(27)));
 		TextBox(scale(1180), scale(260), scale(150), scale(60), Color.orange);
 		gBuffer.setColor(Color.black);
-		gBuffer.drawString(color.getStringField1(), scale(1180) + abstX, (int)(303*width/100) + abstY);
+		gBuffer.drawString(color.getStringField1(), scale(1180) + abstX, scale(303) + abstY);
 		Button(scale(1140), scale(260), scale(30), scale(60), 1);
 		Button(scale(1345), scale(260), scale(30), scale(60), 2);
 		
-		gBuffer.setFont(new Font("Arial", Font.BOLD, (int)(27*width/100)));
+		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(27)));
 		gBuffer.setColor(Color.ORANGE);
 		TextBox(scale(1180), scale(330), scale(150), scale(60), Color.orange);
 		gBuffer.setColor(Color.black);
@@ -112,9 +121,9 @@ public class ChessPrint extends Main {
 		Button(scale(1345), scale(330), scale(30), scale(60), 2);
 		
 		gBuffer.setColor(Color.black);
-		gBuffer.setFont(new Font("Arial", Font.BOLD, (int)(34*width/100)));
+		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(34)));
 		gBuffer.drawString("Farbe der Figuren", scale(1108) + abstX, scale(463) + abstY);
-		gBuffer.setFont(new Font("Arial", Font.BOLD, (int)(27*width/100)));
+		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(27)));
 		TextBox(scale(1180), scale(480), scale(150), scale(60), Color.orange);
 		gBuffer.setColor(Color.black);
 		gBuffer.drawString(color.getStringPlayer1(), scale(1180) + abstX, scale(523) + abstY);
@@ -122,23 +131,23 @@ public class ChessPrint extends Main {
 		Button(scale(1345), scale(480), scale(30), scale(60), 2);
 		
 		gBuffer.setColor(Color.black);
-		gBuffer.setFont(new Font("Arial", Font.BOLD, (int)(27*width/100)));
+		gBuffer.setFont(new Font("Arial", Font.BOLD, scale(27)));
 		gBuffer.setColor(Color.ORANGE);
-		TextBox(scale(1180), (int)(550*width/100), scale(150), scale(60), Color.orange);
+		TextBox(scale(1180), scale(550), scale(150), scale(60), Color.orange);
 		gBuffer.setColor(Color.black);
 		gBuffer.drawString(color.getStringPlayer1(), scale(1180) + abstX, scale(593) + abstY);
-		Button(scale(1140), (int)(550*width/100), scale(30), scale(60), 1);
-		Button(scale(1345), (int)(550*width/100), scale(30), scale(60), 2);
+		Button(scale(1140), scale(550), scale(30), scale(60), 1);
+		Button(scale(1345), scale(550), scale(30), scale(60), 2);
 		
 		//Zeiteinstellen
-		Button((1105*width/100), (int)(740*width/100), scale(98), scale(50), 0);
-		gBuffer.setFont(new Font("Arial", Font.PLAIN, 40*width/100));
+		Button((1105), scale(740), scale(98), scale(50), 0);
+		gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(40)));
 		gBuffer.setColor(Color.black);
 		if(uhrSek)
-			gBuffer.drawString("Sek", (int)(1119*width/100) + abstX, (int)(779*width/100) + abstY);
+			gBuffer.drawString("Sek", scale(1119) + abstX, scale(779) + abstY);
 		else {
-			gBuffer.setFont(new Font("Arial", Font.PLAIN, 20*width/100));
-			gBuffer.drawString("Min:Sek", (int)(1118*width/100) + abstX, (int)(774*width/100) + abstY);
+			gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(20)));
+			gBuffer.drawString("Min:Sek", scale(1118) + abstX, scale(774) + abstY);
 		}
 		
 		int l = scale(1210); int o = scale(700); int u = scale(805);
@@ -151,7 +160,7 @@ public class ChessPrint extends Main {
 
 		TextBox(scale(1210), scale(735), scale(155), scale(60), Color.orange);
 		gBuffer.setColor(Color.black);
-		gBuffer.setFont(new Font("Arial", Font.PLAIN, 65*width/100));
+		gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(65)));
 		String zero = "";
 		String zero2 = "";
 		if(uhrSek){
@@ -159,52 +168,62 @@ public class ChessPrint extends Main {
 			else if(timeP1.getLimit() < 100) zero = "00";
 			else if(timeP1.getLimit() < 1000) zero = "0";
 			else zero = "";
-			gBuffer.drawString(zero + timeP1.getLimit(), scale(1115) + abstX+width, (int)(787*width/100) + abstY);
+			gBuffer.drawString(zero + timeP1.getLimit(), scale(1115) + abstX+width, scale(787) + abstY);
 		} else{
 			zero2 = "";
-			if((int)(timeP1.getLimit()/60)<10) zero2 = "0";
+			if((timeP1.getLimit()/60)<10) zero2 = "0";
 			zero = "";
-			if((int)(timeP1.getLimit()%60)<10) zero = "0";
-			gBuffer.drawString(zero2 + (int)(timeP1.getLimit()/60) + ":" + zero + (int)(timeP1.getLimit()%60), (int)(1107*width/100) + abstX+width, (int)(787*width/100) + abstY);
+			if((timeP1.getLimit()%60)<10) zero = "0";
+			gBuffer.drawString(zero2 + (timeP1.getLimit()/60) + ":" + zero + (timeP1.getLimit()%60), scale(1107) + abstX+width, scale(787) + abstY);
 		}
 		for (int i = 0; i < 4; i++)
 			Button(l+ab*i, u, w, h, 4);
 	}
 	
 //	public void Buf(int x, int y, int width, int abstX, int abstY){
-//		gBuffer.fillRect(x * width + abstX, y * width + abstY, scale(30), 10*width/100);
+//		gBuffer.fillRect(x * width + abstX, y * width + abstY, scale(30), 10);
 //	}
 
-	public void Schachfeld(){
-		gBuffer.setColor(color.getField1());
-		gBuffer.fillRect( abstX, abstY, width*8, width*8);
-		gBuffer.setColor(Color.black);
-		gBuffer.drawRect( abstX, abstY, width*8, width*8);
+	public void CheckBoard(int width){
+		this.width = width;
+		gBuffer.setColor(color.getField1()); // chessboard
+		gBuffer.fillRect(abstX, abstY, width*8, width*8);
 		gBuffer.setColor(color.getField2());
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if(Math.abs(i-j)%2 == 1) Field(i , j);
 			}
 		}
+
+		if (selection && choseStone && game.isRunning()) {
+			if(new Move().Normal(game.brd, Main.m.getX1(), Main.m.getY1(), Main.m.getX2(), Main.m.getY2())) {
+				selection = false;
+				choseStone = false;
+				game.nextPlayer();
+			}
+		}
+
+		gBuffer.setColor(Color.black); // black border
+		gBuffer.drawRect(abstX, abstY, width*8, width*8);
 		for (int i = 0; i < 8; i ++) {
-			if(!easterEgg[1]){
+			if(easterEgg[1]){
 				gBuffer.setColor(Color.red);
 				if(8 - i == 2 || 8 - i == 3 || 8 - i == 5 || 8 - i == 7)
 					gBuffer.fillOval(width + abstX-width - scale(75), width * (i+1) + scale(27) + abstY-width, scale(50), scale(50));
 			}
-			if(!easterEgg[2]){
+			if(easterEgg[2]){
 				gBuffer.setColor(Color.blue);
 				if(8 - i == 1 || 8 - i == 2 || 8 - i == 3 || 8 - i == 5 ||  8 - i == 8)
-					gBuffer.fillOval(width*10 + abstX-width - (int)(75*width/100), width * (i+1) + (int)(27*width/100) + abstY-width, scale(50), scale(50));
+					gBuffer.fillOval(width*10 + abstX-width - (75), width * (i+1) + (27) + abstY-width, scale(50), scale(50));
 			}
-			if(!easterEgg[3]){
+			if(easterEgg[3]){
 				gBuffer.setColor(Color.CYAN);
-				gBuffer.setFont(new Font("Arial", Font.BOLD, (int)(23*width/100)));
+				gBuffer.setFont(new Font("Arial", Font.BOLD, scale(23)));
 				if(i == 0 || i == 1 || i == 2)
-					gBuffer.drawString("2", width * i + (65*width/100) + abstX, width * 10 - (65*width/100) + abstY-width);
+					gBuffer.drawString("2", width * i + (65) + abstX, width * 10 - (65) + abstY-width);
 				gBuffer.setFont(new Font("Arial", Font.BOLD, scale(40)));
-				if(i == 0) gBuffer.drawString("+", width * i + (85*width/100) + abstX, width * 10 - (37*width/100) + abstY-width);
-				if(i == 1) gBuffer.drawString("=", width * i + (90*width/100) + abstX, width * 10 - (37*width/100) + abstY-width);
+				if(i == 0) gBuffer.drawString("+", width * i + (85) + abstX, width * 10 - (37) + abstY-width);
+				if(i == 1) gBuffer.drawString("=", width * i + (90) + abstX, width * 10 - (37) + abstY-width);
 			}
 			
 //			gBuffer.setColor(Color.black);
@@ -213,7 +232,7 @@ public class ChessPrint extends Main {
 //			gBuffer.drawString("" + (8-i), width - scale(65) + abstX-width, width * (i+1) + scale(70) + abstY-width);
 //
 //			gBuffer.setColor(Color.black);
-//			gBuffer.setFont(new Font("Arial", Font.PLAIN, 50*width/100));
+//			gBuffer.setFont(new Font("Arial", Font.PLAIN, 50));
 //			gBuffer.drawString("" + chessStones.getROW().charAt(i), width * i + scale(35) + abstX, width * 10 - scale(35) + abstY-width);
 //			gBuffer.drawString("" + (8-i), width - scale(65) + abstX-width + width*9, width * (i+1) + scale(70) + abstY-width);
 		}
@@ -283,70 +302,70 @@ public class ChessPrint extends Main {
 		gBuffer.fillRect(x + abstX, y + abstY, width, height);
 	}
 	
-	public void Uhren(){
-		// Spieler 1
+	public void clock(Timer time, boolean p1){
+		// player 1
 		gBuffer.setColor(Color.yellow);
-		gBuffer.fillOval(width * 8 + abstX+width, width * 6 + abstY, width * 2, width * 2);
+		gBuffer.fillOval(width * 9 + abstX, width * 6 + abstY, scale(200), scale(200));
 		gBuffer.setColor(Color.black);
-		gBuffer.fillOval(width * 8 + abstX + scale(5) +width, width * 6 + abstY + scale(5), width * 2 - (int)(10*width/100), width * 2 - (int)(10*width/100));
+		gBuffer.fillOval(width * 9 + abstX + scale(8.4), width * 6 + abstY + scale(8.4), scale(185), scale(185));
 		gBuffer.setColor(Color.yellow);
-		gBuffer.fillOval(width * 8 + abstX + (int)(10*width/100) +width, width * 6 + abstY + (int)(10*width/100), width * 2 - (int)(20*width/100), width * 2 - (int)(20*width/100));
+		gBuffer.fillOval(width * 9 + abstX + scale(14), width * 6 + abstY + scale(14), scale(175), scale(175));
 //		if(!easterEgg[0]) chessStones.easterEggBvB2(); //TODO: integrieren
 		gBuffer.setColor(Color.gray);
-		gBuffer.fillArc(width * 8 + abstX+width, width * 6 + abstY, width * 2, width * 2, 0, (int) (((double)timeP1.getTime() / (double)timeP1.getTime()) * 360)-360);
+		gBuffer.fillArc(width * 9 + abstX, width * 6 + abstY, scale(200), scale(200), 0, (int) (((double)time.getTime() / (double)time.getTime()) * 360) - 360);
 		gBuffer.setColor(Color.black);
-		gBuffer.setFont(new Font("Arial", Font.PLAIN, 70*width/100));
+		gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(70)));
 		if(uhrSek){
-			String zero = "";
-			if(timeP1.getTime() < 10) zero = "000";
-			else if(timeP1.getTime() < 100) zero = "00";
-			else if(timeP1.getTime() < 1000) zero = "0";
+			String zero;
+				 if(time.getTime() < 10) zero = "000";
+			else if(time.getTime() < 100) zero = "00";
+			else if(time.getTime() < 1000) zero = "0";
 			else zero = "";
-			gBuffer.drawString(zero + timeP1.getTime(), (int)(width * 8.2) + abstX  * 2 -abstX+width, (int)(width * 5.6) + (int)(22*width/100) + abstY);
+			gBuffer.drawString(zero + time.getTime(), (int)(width * 8.2) + abstX  * 2 -abstX+width, (int)(width * 5.6) + (int)(22) + abstY);
 		}
 		else{
 			String zero2 = "";
-			if((int)(timeP1.getTime()/60)<10) zero2 = "0";
+			if ((time.getTime() / 60) < 10) zero2 = "0";
 			String zero = "";
-			if(timeP1.getTime() % 60 < 10) zero = "0";
-			gBuffer.drawString(zero2 + (int)(timeP1.getTime() / 60) + ":" + zero + timeP1.getTime() % 60, (int)(width * 8.12) + abstX  * 2 -abstX+width, (int)(width * 5.6) + (int)(22*width/100) + abstY);
+			if (time.getTime() % 60 < 10) zero = "0";
+			gBuffer.drawString(zero2 + (time.getTime() / 60) + ":" + zero + time.getTime() % 60, (int) (width * 8.12) + abstX * 2 - abstX + width, (int) (width * 5.6) + (int) (22) + abstY);
 		}
 		
-		// Spieler 2
-		gBuffer.setColor(Color.yellow);
-		gBuffer.fillOval(width * 8 + abstX+width, width * 0 + abstY, width * 2, width * 2);
-		gBuffer.setColor(Color.black);
-		gBuffer.fillOval(width * 8 + abstX+ scale(5) +width, width * 0 + abstY + scale(5), width * 2 - (int)(10*width/100), width * 2 - (int)(10*width/100));
-		gBuffer.setColor(Color.yellow);
-		gBuffer.fillOval(width * 8 + abstX+ (int)(10*width/100) +width, width * 0 + abstY + (int)(10*width/100), width * 2 - (int)(20*width/100), width * 2 - (int)(20*width/100));
-//		if(!easterEgg[0]) chessStones.easterEggBvB1(); //TODO: integrieren
-		gBuffer.setColor(Color.gray);
-		gBuffer.fillArc(width * 8 + abstX+width, width * 0 + abstY, width * 2, width * 2, 0, (int) (((double)timeP2.getTime() / (double)timeP1.getTime()) * 360)-360);
-		gBuffer.setColor(Color.black);
-		gBuffer.setFont(new Font("Arial", Font.PLAIN, 70*width/100));
-		if(uhrSek){
-			String zero = "";
-			if(timeP2.getTime() < 10) zero = "000";
-			else if(timeP2.getTime() < 100) zero = "00";
-			else if(timeP2.getTime() < 1000) zero = "0";
-			else zero = "";
-			gBuffer.drawString(zero + timeP2.getTime(), (int)(width * 8.2) + abstX  * 2 -abstX+width, (int)(width * 2.5) + (int)(22*width/100) + abstY);
-		}
-		else{
-			String zero2 = "";
-			if((int)(timeP2.getTime() / 60) < 10) zero2 = "0";
-			String zero = "";
-			if(timeP2.getTime() % 60 < 10) zero = "0";
-			gBuffer.drawString(zero2 + (int)(timeP2.getTime() / 60) + ":" + zero + timeP2.getTime() % 60, (int)(width * 8.12) + abstX  * 2 -abstX+width, (int)(width * 2.5) + (int)(22*width/100) + abstY);
-		}
+//		// Spieler 2
+//		gBuffer.setColor(Color.yellow);
+//		gBuffer.fillOval(width * 8 + abstX+width, abstY, width * 2, width * 2);
+//		gBuffer.setColor(Color.black);
+//		gBuffer.fillOval(width * 8 + abstX+ scale(8.4) +width, abstY + scale(8.4), width * 2 - (10), width * 2 - (10));
+//		gBuffer.setColor(Color.yellow);
+//		gBuffer.fillOval(width * 8 + abstX+ (10) +width, abstY + (10), width * 2 - (20), width * 2 - (20));
+////		if(!easterEgg[0]) chessStones.easterEggBvB1(); //TODO: integrieren
+//		gBuffer.setColor(Color.gray);
+//		gBuffer.fillArc(width * 8 + abstX+width, abstY, width * 2, width * 2, 0, (int) (((double)timeP2.getTime() / (double)timeP1.getTime()) * 360)-360);
+//		gBuffer.setColor(Color.black);
+//		gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(70)));
+//		if(uhrSek){
+//			String zero = "";
+//			if(timeP2.getTime() < 10) zero = "000";
+//			else if(timeP2.getTime() < 100) zero = "00";
+//			else if(timeP2.getTime() < 1000) zero = "0";
+//			else zero = "";
+//			gBuffer.drawString(zero + timeP2.getTime(), (int)(width * 8.2) + abstX  * 2 -abstX+width, (int)(width * 2.5) + (int)(22) + abstY);
+//		}
+//		else{
+//			String zero2 = "";
+//			if((int)(timeP2.getTime() / 60) < 10) zero2 = "0";
+//			String zero = "";
+//			if(timeP2.getTime() % 60 < 10) zero = "0";
+//			gBuffer.drawString(zero2 + (timeP2.getTime() / 60) + ":" + zero + timeP2.getTime() % 60, (int)(width * 8.12) + abstX  * 2 -abstX+width, (int)(width * 2.5) + (int)(22) + abstY);
+//		}
 		
 		//Zuege Zaehler
 		gBuffer.setColor(color.getField1());
-		gBuffer.fillRoundRect(10*width + abstX-width, 5*width + abstY-width, (int)(100*width/100), (int)(100*width/100), quaX, quaY);
-		gBuffer.fillRoundRect(11*width + abstX-width, 4*width + abstY-width, (int)(100*width/100), (int)(100*width/100), quaX, quaY);
+		gBuffer.fillRoundRect(10*width + abstX-width, 5*width + abstY-width, scale(100), scale(100), quaX, quaY);
+		gBuffer.fillRoundRect(11*width + abstX-width, 4*width + abstY-width, scale(100), scale(100), quaX, quaY);
 		gBuffer.setColor(color.getField2());
-		gBuffer.fillRoundRect(10*width + abstX-width, 4*width + abstY-width, (int)(100*width/100), (int)(100*width/100), quaX, quaY);
-		gBuffer.fillRoundRect(11*width + abstX-width, 5*width + abstY-width, (int)(100*width/100), (int)(100*width/100), quaX, quaY);
+		gBuffer.fillRoundRect(10*width + abstX-width, 4*width + abstY-width, scale(100), scale(100), quaX, quaY);
+		gBuffer.fillRoundRect(11*width + abstX-width, 5*width + abstY-width, scale(100), scale(100), quaX, quaY);
 		gBuffer.setColor(Color.gray);
 		gBuffer.fillOval(width * 8 + scale(50) + abstX+width, width * 3 + scale(50) + abstY, width, width);
 		
@@ -361,32 +380,17 @@ public class ChessPrint extends Main {
 //			}
 //		}
 		gBuffer.setColor(Color.black);
-		gBuffer.setFont(new Font("Arial", Font.PLAIN, 40*width/100));
-		String zero = "";
-		if(game.brd.getMove_count()<10) zero = "000";
+		gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(40)));
+		String zero;
+			 if(game.brd.getMove_count()<10) zero = "000";
 		else if(game.brd.getMove_count()<100) zero = "00";
 		else if(game.brd.getMove_count()<1000) zero = "0";
 		else zero = "";
 		gBuffer.drawString(zero + game.brd.getMove_count(), (int)(width * 9.56) + abstX, width * 4 + scale(15) + abstY);
 		if(game.isRunning()){
 			gBuffer.setColor(Color.black);
-			gBuffer.setFont(new Font("Arial", Font.PLAIN, 65*width/100));
-			gBuffer.drawString("ad" /**game.getLastMove()*/, (int)(800*width/100) + abstX+width, (int)(870*width/100) + abstY);
-		}
-	}
-
-	public void printSinus() {
-		int sincl = 0;
-		for (double i = 0; i < 480; i++) {
-			gBuffer.setStroke(new BasicStroke(5));
-			int red = (int) (Math.sin(i / 10 + 0 + sincl * i / i) * 127 + 128);
-			int green = (int) (Math.sin(i / 10 + 2 + sincl * i / i) * 127 + 128);
-			int blue = (int) (Math.sin(i / 10 + 4 + sincl * i / i) * 127 + 128);
-			gBuffer.setColor(new Color(red, green, blue));
-			double mathsin = Math.sin(sincl / 5) * Math.sin(sincl / 5) * 100;
-			double mathcos = Math.cos(sincl / 5) * Math.cos(sincl / 5) * 100;
-			gBuffer.drawLine((int) (i + 100), (int) (Math.sin(i / mathsin) * mathsin + 250), (int) (i + 166), (int) (Math.sin(i / mathcos) * mathcos + 250));
-			gBuffer.drawLine((int)(i), (int)(Math.tan(i/30)*30) + 100, (int)(i), (int)(Math.tan(i/30)*30) + 100);
+			gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(65)));
+			gBuffer.drawString("ad" /*game.getLastMove()*/, scale(800) + abstX+width, scale(870) + abstY);
 		}
 	}
 }

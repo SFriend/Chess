@@ -36,7 +36,7 @@ public class Move {
 			for (int j1 = 0; j1 < 8; j1++) {
 				int x1 = (int) p[0][i1][j1].getX();
 				int y1 = (int) p[0][i1][j1].getY();
-				for (Piece pc1 : brd.getPlayerStones().get(brd.getPlayer())) {
+				for (Piece pc1 : brd.getPlayerStones()) {
 					if (pc1.getX() == x1 && pc1.getY() == y1) {
 						for (int i2 = 0; i2 < 8; i2++) {
 							for (int j2 = 0; j2 < 8; j2++) {

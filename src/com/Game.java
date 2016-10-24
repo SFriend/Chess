@@ -7,45 +7,74 @@ import java.util.Random;
  */
 public class Game {
     private boolean running = true;
-    private boolean finish = false;
     public Board brd;
+    Player player1;
+    Player player2;
 
     public Game(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
         brd = new Board();
-        float points = 0f;
-        while (isRunning()) {
-            if (brd.getMove_count() > 100 || brd.getPieceNumber() <= 2) {
-                points = 0.5f;
-                break;
-            }
+    }
 
-            Board temp = brd.cloneBoard();
-            if (player1.getBrain().SmartMove(brd)) {
+    public void start() {
+        System.out.println("Starting game...");
+        running = true;
+        float points = 0.5f;
+        while (brd.getMove_count() < 60) {
+            if (!player1.getBrain().SmartMove(brd)) {
                 points = 1f;
                 break;
             }
-
-            Board temp2 = brd.cloneBoard();
-            if (player2.getBrain().SmartMove(brd)) {
+            if (!player2.getBrain().SmartMove(brd)) {
                 points = 0f;
                 break;
             }
         }
-        int elo_p1 = player1.getElo();
-        int elo_p2 = player2.getElo();
-        player1.setElo(elo_p2, points);
-        player2.setElo(elo_p1, 1-points);
-//        EventQueue.invokeLater(new Main());
+//        if (points == 1) {
+//            System.out.println("player2 won");
+//            player2.getBrain().printStats();
+//            brd.print();
+//        } else if (points == 0){
+//            System.out.println("player1 won");
+//            player1.getBrain().printStats();
+//            brd.print();
+//        }
+        int elo_p1 = player1.elo.getElo();
+        int elo_p2 = player2.elo.getElo();
+        player1.elo.changeElo(elo_p2, points);
+        player2.elo.changeElo(elo_p1, 1-points);
+        System.out.println("finished game....");
+    }
+
+    public void nextPlayer() {
+        boolean moved = false;
+        float points = 0.5f;
+        if (brd.getMove_count() < 60) {
+            if (brd.getPlayer() == 0) {
+                if (!player1.getBrain().SmartMove(brd)) {
+                    moved = true;
+                    points = 1f;
+                }
+            } else {
+                if (!player2.getBrain().SmartMove(brd)) {
+                    moved = true;
+                    points = 0f;
+                }
+            }
+        }
+        if (!moved) {
+            int elo_p1 = player1.elo.getElo();
+            int elo_p2 = player2.elo.getElo();
+            player1.elo.changeElo(elo_p2, points);
+            player2.elo.changeElo(elo_p1, 1-points);
+        }
     }
 
     double randomGenerator(long seed) {
         Random generator = new Random(seed);
         double num = generator.nextDouble() * (1.0);
         return num;
-    }
-
-    public void start(){
-        running = true;
     }
 
     public void finish() {
