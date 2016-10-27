@@ -8,8 +8,8 @@ import java.util.Random;
 public class Game {
     private boolean running = true;
     public Board brd;
-    Player player1;
-    Player player2;
+    public Player player1;
+    public Player player2;
 
     public Game(Player player1, Player player2) {
         this.player1 = player1;
@@ -18,18 +18,18 @@ public class Game {
     }
 
     public void start() {
-        System.out.println("Starting game...");
         running = true;
         float points = 0.5f;
         while (brd.getMove_count() < 60) {
-            if (!player1.getBrain().SmartMove(brd)) {
-                points = 1f;
-                break;
-            }
-            if (!player2.getBrain().SmartMove(brd)) {
-                points = 0f;
-                break;
-            }
+            nextPlayer();
+//            if (!player1.getBrain().SmartMove(brd)) {
+//                points = 1f;
+//                break;
+//            }
+//            if (!player2.getBrain().SmartMove(brd)) {
+//                points = 0f;
+//                break;
+//            }
         }
 //        if (points == 1) {
 //            System.out.println("player2 won");
@@ -44,7 +44,6 @@ public class Game {
         int elo_p2 = player2.elo.getElo();
         player1.elo.changeElo(elo_p2, points);
         player2.elo.changeElo(elo_p1, 1-points);
-        System.out.println("finished game....");
     }
 
     public void nextPlayer() {

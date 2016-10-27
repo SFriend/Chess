@@ -11,7 +11,7 @@ public class ChessColor {
     static int[] count = new int[4]; //= 1000000, countColor2 = 1000011, countColor3 = 1000002, countColor4 = 1000006;
 
     public ChessColor() {
-        count = new int[]{0,1,2,3};
+        count = new int[]{9,10,3,8};
     }
 
     public boolean checkForSameColor() {

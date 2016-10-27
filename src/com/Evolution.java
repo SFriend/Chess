@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by pdk on 14.10.16.
  */
 public class Evolution {
-    static int number_of_games = 100;
+    static int number_of_games = 20;
     static final int generations = 10;
     static ArrayList<Player> players = new ArrayList<>();
 
@@ -18,9 +18,9 @@ public class Evolution {
         }
         for (int g = 0; g < generations; g++) {
             for (int i = 0; i < number_of_games; i++) {
-                for (int j = 0; j < number_of_games; j++) {
-                    if (i == j) continue;
-                    new Game(players.get(i), players.get(j));
+                for (int j = i+1; j < number_of_games; j++) {
+//                    if (i == j) continue;
+                    new Game(players.get(i), players.get(j)).start();
                     System.out.println("finish " + i + ":" + j );
                 }
             }

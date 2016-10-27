@@ -34,18 +34,6 @@ public class ChessPrint {
 		abstY = width;
 		gBuffer = Main.gBuffer;
 		CheckBoard(width);
-		int selecColor = 5;
-		while (color.checkForSameColorSelection(selecColor)) {
-			selecColor++;
-		}
-		gBuffer.setColor(color.getColor(selecColor % color.getLength()));
-		if (selection) { // prints selection
-			Field(Main.m.getX1(), Main.m.getY1());
-		}
-		if(choseStone){ // prints chose
-			Field(Main.m.getX2(), Main.m.getY2());
-		}
-		new ChessStones(game.brd, gBuffer);
 //		if(choseStone) new ChessStones().ChoseStone(choseStoneX, choseStoneY);
 //		Settings();
 //		clock(timeP1, false);
@@ -161,8 +149,8 @@ public class ChessPrint {
 		TextBox(scale(1210), scale(735), scale(155), scale(60), Color.orange);
 		gBuffer.setColor(Color.black);
 		gBuffer.setFont(new Font("Arial", Font.PLAIN, scale(65)));
-		String zero = "";
-		String zero2 = "";
+		String zero;
+		String zero2;
 		if(uhrSek){
 				 if(timeP1.getLimit() < 10) zero = "000";
 			else if(timeP1.getLimit() < 100) zero = "00";
@@ -191,20 +179,58 @@ public class ChessPrint {
 		gBuffer.setColor(color.getField2());
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				if(Math.abs(i-j)%2 == 1) Field(i , j);
+				if (Math.abs(i-j)%2 == 1) Field(i , j);
 			}
 		}
 
 		if (selection && choseStone && game.isRunning()) {
-			if(new Move().Normal(game.brd, Main.m.getX1(), Main.m.getY1(), Main.m.getX2(), Main.m.getY2())) {
-				selection = false;
-				choseStone = false;
-				game.nextPlayer();
+			if (!game.brd.isEmpty(Main.m.getX1(), Main.m.getY1())) {
+				if (new Move().Normal(game.brd, Main.m.getX1(), Main.m.getY1(), Main.m.getX2(), Main.m.getY2())) {
+					selection = false;
+					choseStone = false;
+					//				game.nextPlayer();
+				} else {
+					System.out.println("cant move");
+					choseStone = false;
+				}
 			}
 		}
 
+		int selecColor = 5;
+		while (color.checkForSameColorSelection(selecColor)) {
+			selecColor++;
+		}
+		gBuffer.setColor(color.getColor(selecColor % color.getLength()));
+		if (selection) { // prints selection
+			Field(Main.m.getX1(), Main.m.getY1());
+		}
+		if(choseStone){ // prints chose
+			Field(Main.m.getX2(), Main.m.getY2());
+		}
+		new ChessStones(game.brd, gBuffer);
+
+		int rad = 20;
+		gBuffer.setColor(Color.cyan); // black border
+		gBuffer.setStroke(new BasicStroke(scale(10)));
+		int x11 = (int)(game.brd.getBalance()[0].getX() * width) + width;
+		int y11 = (int)(game.brd.getBalance()[0].getY() * width) + width;
+		int x12 = (int)(game.player1.getBrain().getPrefBoardMiddle().getX() * width) + width;
+		int y12 = (int)(game.player1.getBrain().getPrefBoardMiddle().getY() * width) + width;
+		gBuffer.fillOval(x11 - rad/2, y11 - rad/2, rad, rad);
+		gBuffer.fillOval(x12 - rad/2, y12 - rad/2, rad, rad);
+		gBuffer.drawLine(x11, y11, x12, y12);
+
+		gBuffer.setColor(Color.blue); // black border
+		int x21 = (int)(game.brd.getBalance()[1].getX() * width) + width;
+		int y21 = (int)(game.brd.getBalance()[1].getY() * width) + width;
+		int x22 = (int)(game.player2.getBrain().getPrefBoardMiddle().getX() * width) + width;
+		int y22 = (int)(game.player2.getBrain().getPrefBoardMiddle().getY() * width) + width;
+		gBuffer.fillOval(x21 - rad/2, y21 - rad/2, rad, rad);
+		gBuffer.fillOval(x22 - rad/2, y22 - rad/2, rad, rad);
+		gBuffer.drawLine(x21, y21, x22, y22);
+
 		gBuffer.setColor(Color.black); // black border
-		gBuffer.drawRect(abstX, abstY, width*8, width*8);
+		gBuffer.drawRect(abstX-3, abstY-3, width*8+6, width*8+6);
 		for (int i = 0; i < 8; i ++) {
 			if(easterEgg[1]){
 				gBuffer.setColor(Color.red);

@@ -55,16 +55,16 @@ public class Board {
     }
 
     public void movePiece(int x1, int y1, int x2, int y2) {
-        if (isEmpty(x2,y2)) {
-            getPiece(x1,y1).setXY(x2,y2);
+        if (isEmpty(x2, y2)) {
+            getPiece(x1, y1).setXY(x2, y2);
         } else {
-            playerStones.get(1-getPlayer()).remove(getPiece(x2,y2));
-            getPiece(x1,y1).setXY(x2,y2);
+            playerStones.get(1 - getPlayer()).remove(getPiece(x2, y2));
+            getPiece(x1, y1).setXY(x2, y2);
         }
-        if (getPiece(x2,y2).getID() == 0) { // pawn to special piece
+        if (getPiece(x2, y2).getID() == 0) { // pawn to special piece
             if (y2 == 0 || y2 == 7) {
-                playerStones.get(getPlayer()).remove(getPiece(x2,y2));
-                playerStones.get(getPlayer()).add(new Queen(x2,y2,0,whiteTurn));
+                playerStones.get(getPlayer()).remove(getPiece(x2, y2));
+                playerStones.get(getPlayer()).add(new Queen(x2, y2, 0, whiteTurn));
             }
         }
     }
@@ -118,7 +118,7 @@ public class Board {
     }
 
     public int getPieceNumber(){
-        return player1.size()+player2.size();
+        return player1.size() + player2.size();
     }
 
     public int getPlayer(){
@@ -142,8 +142,8 @@ public class Board {
         return true;
     }
 
-    public boolean isColorEqual(int x1, int y1, int x2, int y2) {
-        if (!isEmpty(x2,y2)) return getPiece(x1, y1).isWhite() == getPiece(x2,y2).isWhite();
+    public boolean isColorEqual(Piece pc, int x2, int y2) {
+        if (!isEmpty(x2,y2)) return pc.isWhite() == getPiece(x2,y2).isWhite();
         return false;
     }
 

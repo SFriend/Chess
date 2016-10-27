@@ -4,10 +4,10 @@ import java.awt.*;
 
 public class Move {
 	boolean calculating = false;
-	private String nation = "abcdefgh";
-	private String lastMove = "";
 	public boolean Normal (Board brd, int x1, int y1, int x2, int y2) {
-		if (new Logic(brd, x1, y1, x2, y2).canMove()) {
+//		System.out.println(pc.getX() + " 1 " + pc.getY());
+		if (new Logic(brd, brd.getPiece(x1,y1), x2, y2).canMove()) {
+//			System.out.println(pc.getX() + " 2 " + pc.getY());
 //			lastMove = "";
 //			lastMove += brd.getPiece(x1,y1).getName().charAt(0);
 //			lastMove += nation.charAt(x1) + "" + (y1 + 1); // move 1
@@ -18,7 +18,7 @@ public class Move {
 //				}
 //			}
 //			lastMove += nation.charAt(x2) + "" + (y2 + 1); // move 2
-			brd.movePiece(x1, y1, x2, y2); // moves
+			brd.movePiece(x1, y1, x2, y2); // moves //.getX(), pc.getY()
 			brd.incrementMoveCount();
 //			if(isCheck(brd)) temp += "+";
 //			brd.print();
@@ -42,7 +42,7 @@ public class Move {
 							for (int j2 = 0; j2 < 8; j2++) {
 								int x2 = (int) p[1][i2][j2].getX();
 								int y2 = (int) p[1][i2][j2].getY();
-								if (Normal(brd, x1, y1, x2, y2)) {
+								if (Normal(brd, pc1.getX(), pc1.getY(), x2, y2)) {
 									calculating = false;
 									return true;
 								}

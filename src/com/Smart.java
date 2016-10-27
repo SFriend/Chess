@@ -17,21 +17,19 @@ public class Smart extends Move{
 
 	public Smart clone() {
 		Smart clone = new Smart();
-		for (int i = 0; i < getValuesStones().length; i++)
-			clone.values_stones[i] = getValuesStones()[i];
-		for (int i = 0; i < getValuesStyle().length; i++)
-			clone.values_style[i] = getValuesStyle()[i];
-		clone.prefBoardMiddle = getPrefBoardMiddle().clone();
+		for (int i = 0; i < values_stones.length; i++)
+			clone.values_stones[i] = values_stones[i];
+		for (int i = 0; i < values_style.length; i++)
+			clone.values_style[i] = values_style[i];
+		clone.prefBoardMiddle = prefBoardMiddle.clone();
 		return clone;
 	}
 
 	public boolean SmartMove(Board brd) {
-//		System.out.println((brd.getPlayerStones().size() * 13) / 16.0);
-		if (brd.getPlayerStones().size() <
-				(brd.getStones().get(1-brd.getPlayer()).size() * 13) / 16.0) {
-//			System.out.println("won");
-			return false;
-		}
+//		if (brd.getPlayerStones().size() <
+//				(brd.getStones().get(1-brd.getPlayer()).size() * 13) / 16.0) {
+//			return false;
+//		}
 //		if(brd.getMove_count() > 20 && brd.getMove_count() < 32) { // if loses one piece every turn
 //			if (brd.getPlayerStones().size() < 16-(brd.getMove_count()/2)) return false;
 //		}
@@ -40,7 +38,7 @@ public class Smart extends Move{
 		for (Piece pc1: brd.getPlayerStones()) {
 			for(int x2 = 0; x2 < 8; x2++) {
 				for (int y2 = 0; y2 < 8; y2++) {
-					if (new Logic(brd, pc1.getX(), pc1.getY(), x2, y2).canMove()) {
+					if (new Logic(brd, pc1, x2, y2).canMove()) {
 						moved = true;
 						Board clone = brd.cloneBoard();
 						new Move().Normal(clone, pc1.getX(), pc1.getY(), x2, y2);

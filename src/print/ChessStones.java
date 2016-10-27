@@ -16,9 +16,9 @@ public class ChessStones {
 	public ChessStones(Board brd, Graphics2D gBuffer) {
 		this.gBuffer = gBuffer;
 		for (ArrayList<Piece> tempStones: brd.getStones()) {
+			if(tempStones.get(0).isWhite()) gBuffer.setColor(cc.getPlayer1());
+			else gBuffer.setColor(cc.getPlayer2());
 			for (Piece pc: tempStones) {
-				if(pc.isWhite()) gBuffer.setColor(cc.getPlayer1());
-				else gBuffer.setColor(cc.getPlayer2());
 //				gBuffer.fillOval(i*width + width, j*width + width, width, width);
 //				gBuffer.setColor(Color.green);
 //				gBuffer.setFont(new Font("Arial", Font.PLAIN, 80*width/100));
@@ -123,8 +123,8 @@ public class ChessStones {
 		printFillOval(x + scale(10), y + scale(50), 15, 15); // mouth
 		printFillOval(x + scale(40), y + scale(10),  8, 15); // ear l
 		printFillOval(x + scale(47), y + scale(13), 10, 20); // ear r
-		int[] x1 = {x + scale(15) + width, x + scale(25) + width, x + scale(50) + width, x + scale(30) + width };// Mundst�ck
-		int[] y1 = {y + scale(53) + width, y + scale(60) + width, y + scale(25) + width, y + scale(25) + width };
+		int[] x1 = fillArray(new int[]{x + scale(15), x + scale(25), x + scale(50), x + scale(30) }); // mouth
+		int[] y1 = fillArray(new int[]{y + scale(53), y + scale(60), y + scale(25), y + scale(25) });
 		gBuffer.fillPolygon(x1, y1, 4);
 	}
 
@@ -138,8 +138,8 @@ public class ChessStones {
 		printFillRect(x + scale(25), y + scale(88), 50, 12); // feet
 		printFillOval(x + scale(12), y + scale(42), 38, 38); // ball l
 		printFillOval(x + scale(50), y + scale(42), 38, 38); // ball r
-		int[] x1 = {x + scale(25) + width, x + scale(75) + width, x + scale(87) + width, x + scale(13) + width };// Mittelteil
-		int[] y1 = {y + scale(88) + width, y + scale(88) + width, y + scale(54) + width, y + scale(54) + width };
+		int[] x1 = fillArray(new int[]{x + scale(25), x + scale(75), x + scale(87), x + scale(13) }); // mouth
+		int[] y1 = fillArray(new int[]{y + scale(88), y + scale(88), y + scale(54), y + scale(54) });
 		gBuffer.fillPolygon(x1, y1, 4);
 		printFillOval(x + scale(15), y + scale(20), 10, 10); // ball 1
 		printFillOval(x + scale(35), y + scale(15), 10, 10); // ball 2
@@ -190,6 +190,7 @@ public class ChessStones {
 		printFillArc(x + scale(20), y + scale(80), 65, 40); // feet 1
 		printFillArc(x + scale(30), y + scale(65), 45, 40); // feet 2
 	}
+
 	private void printFillRect(int x, int y, int w, int h) {
 		gBuffer.fillRect(x + width, y + width, scale(w), scale(h));
 	}
@@ -204,6 +205,13 @@ public class ChessStones {
 
 	private int scale(int a){
 		return a * width / 100;
+	}
+
+	private int[] fillArray(int[] array) {
+		for (int i = 0; i < array.length; i++) {
+			array[i] += width;
+		}
+		return array;
 	}
 
 	public void easterEggBvB1(){

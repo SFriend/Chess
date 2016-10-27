@@ -122,7 +122,7 @@ public class Main extends JPanel implements Runnable {
     public void reset() {
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
-                fields[x][y] = new Field(width + width*x, width+width*y, width, width);
+                fields[x][y] = new Field(width + width*x, width+width*y + 25, width, width);
             }
         }
         ChessPrint.choseStone = false;
@@ -197,7 +197,6 @@ public class Main extends JPanel implements Runnable {
             for (int x = 0; x < 8; x++) {
                 for (int y = 0; y < 8; y++) {
                     if(fields[x][y].isPressed(evt.getPoint())) {
-                        System.out.println(x + " " + y + " " +m.getX1()/width + " " + m.getY2()/width);
                         if (!menu.selection && !menu.choseStone && !game.brd.isEmpty(x, y)) {
                             m.p1.setLocation(x,y);
                             menu.selection = true;
@@ -205,9 +204,13 @@ public class Main extends JPanel implements Runnable {
                             if (x == m.p1.getX() && y == m.p1.getY()) {
                                 menu.selection = false;
                                 menu.choseStone = false;
-                            } else if (!game.brd.isColorEqual(m.getX1()/width,m.getY2()/width,x,y)) {
+                            } else if (!game.brd.isColorEqual(game.brd.getPiece(m.getX1(),m.getY1()),x,y)) {
                                 m.p2.setLocation(x,y);
                                 menu.choseStone = true;
+                            } else {
+                                m.p1.setLocation(x,y);
+                                menu.selection = true;
+                                menu.choseStone = false;
                             }
                         }
                     }
